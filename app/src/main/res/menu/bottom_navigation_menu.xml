@@ -1,0 +1,23 @@
+<!-- bottom_navigation_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_button_1"
+        android:title="明细"
+        android:icon="@drawable/ic_button_1" />
+
+    <item
+        android:id="@+id/menu_button_2"
+        android:title="统计"
+        android:icon="@drawable/ic_button_2" />
+
+    <!-- Add two more items for Button 3 and Button 4 -->
+    <item
+        android:id="@+id/menu_button_3"
+        android:title="我的"
+        android:icon="@drawable/ic_button_3" />
+
+    <item
+        android:id="@+id/menu_button_4"
+        android:title="记账"
+        android:icon="@drawable/ic_button_4" />
+</menu>

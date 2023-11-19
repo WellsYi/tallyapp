@@ -1,11 +1,10 @@
 package com.example.tallyapp.activity;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -13,32 +12,50 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 import com.example.tallyapp.R;
-import com.example.tallyapp.dao.UserDao;
-import com.example.tallyapp.entity.User;
+import com.example.tallyapp.dbhelper.DBHelper;
+import com.example.tallyapp.utils.ShowDialog;
+
 
 public class SignUpActivity extends AppCompatActivity {
-
-    private SharedPreferences sp;
-    private MyDBOpenHelper mhelper; //定义数据库帮助类对象
+    private DBHelper dbHelper; //定义数据库帮助类对象
     private SQLiteDatabase db;
+    private Button backButton, signupButton;
+    private EditText userName, name, password, repeatPassword;
+    private ShowDialog showDialog;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        Button backButton = findViewById(R.id.back);
-        Button signupButton = findViewById(R.id.signinButton);
-        EditText accountET = findViewById(R.id.userNEditText);
-        EditText nameET = findViewById(R.id.nameEditText);
-        EditText pwdET = findViewById(R.id.userPEditText);
-        EditText repwdET = findViewById(R.id.userPAgainEditText);
+        //初始化
+        initView();
 
+        //注册用户
+        signup();
+
+        //返回键返回登录界面
+        backToLogin();
+
+    }
+
+    private void initView(){
+        backButton = findViewById(R.id.back);
+        signupButton = findViewById(R.id.signinButton);
+        userName = findViewById(R.id.userNEditText);
+        name = findViewById(R.id.nameEditText);
+        password = findViewById(R.id.userPEditText);
+        repeatPassword = findViewById(R.id.repeatPasswordEditText);
+        dbHelper = new DBHelper(SignUpActivity.this);
+        db = dbHelper.getWritableDatabase();
+        showDialog = new ShowDialog(SignUpActivity.this);
+    }
+
+    private void backToLogin(){
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,56 +64,29 @@ public class SignUpActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
 
+    private void signup(){
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = accountET.getText().toString();
-                String password = pwdET.getText().toString();
-                String repwd = repwdET.getText().toString();
-                String name = nameET.getText().toString();
-                //检查信息是否合法
-//                if (!InformationJudgment(username, password, repwd)) {
-//                    return;
-//                }
-
-                //存储用户信息
-                User user = new User(name, username,password);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            UserDao.insertUser(user);
-//                            Toast.makeText()
-                            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }).start();
-                //跳转至登录界面
-
-
+                if(!InformationJudgment(name.getText().toString(), userName.getText().toString(), password.getText().toString(), repeatPassword.getText().toString())){
+                    return;
+                }
+                else{
+                    ContentValues values = new ContentValues();
+                    values.put("name", name.getText().toString());
+                    values.put("username", userName.getText().toString());
+                    values.put("password", password.getText().toString());
+                    db.insert("users", null, values);
+                    Toast.makeText(SignUpActivity.this, "注册成功",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
-    }
-    public void showDialog(String msg){
-        //1、创建AlertDialog.Builder对象
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        //2、设置提示窗口相关信息
-        builder.setTitle("提示");
-        builder.setMessage(msg);//提示信息
-        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        builder.setCancelable(false);//点击空白区域不能被关掉  true能被关掉
-        builder.show();//显示提示框
     }
 
     public static boolean containsAlphanumericCombination(String inputString) {
@@ -110,39 +100,41 @@ public class SignUpActivity extends AppCompatActivity {
         return matcher.find();
     }
 
-    public boolean InformationJudgment(String account, String pwd, String repwd){
+    private boolean InformationJudgment(String name, String userName, String password, String repeatPassword){
         //判断条件
-        //判断用户名是否为空
-        if(account != null && !"".equals(account)){
-            if(account.equals(sp.getString("account", ""))){
-                showDialog("用户已存在");
-                return false;
-            }
-        }else {
-            //用户名为空
-            showDialog("用户名不能为空");
+        //判断用户是否已经注册
+        if(isexist(userName)){
+            showDialog.showDialog("用户已存在！");
             return false;
         }
 
-        if(pwd == null || pwd.equals("")){
-            showDialog("密码不能为空");
+        //填写是否规范
+        if(password == null || password.equals("") || name == null || name.equals("") || userName == null || userName.equals("")){
+            showDialog.showDialog("昵称、用户名、密码不能为空");
             return false;
         }
-        if(pwd.length() < 8 || pwd.length() > 16){
-            showDialog("密码长度应是8-16");
+        if(password.length() < 8 || password.length() > 16){
+            showDialog.showDialog("密码长度应是8-16");
             return false;
         }
-        if(!containsAlphanumericCombination(pwd)) {
-            showDialog("密码应包含大小写字母与数字");
+        if(!containsAlphanumericCombination(password)) {
+            showDialog.showDialog("密码应包含大小写字母与数字");
             return false;
         }
 
-        if (!pwd.equals(repwd)){
+        if (!password.equals(repeatPassword)){
             //Toast.makeText(MainActivity.this, "两次密码不一致！", Toast.LENGTH_SHORT).show();
-            showDialog("两次密码不一致");
+            showDialog.showDialog("两次密码不一致");
             return false;
         }
+        return true;
+    }
 
+    private boolean isexist(String userName){
+        Cursor cursor = db.rawQuery("select * from users where username= ?", new String[]{userName});
+        if(cursor.getCount() == 0){
+            return false;
+        }
         return true;
     }
 

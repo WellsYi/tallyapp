@@ -13,9 +13,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="sign up"
-        android:backgroundTint="@color/white"
-        android:textColor="#979A9A"
+        android:backgroundTint="#fffbfe"
+        android:textColor="#5896ba"
         android:layout_alignParentTop="true"
+        android:textStyle="bold"
+        android:textSize="17dp"
         android:layout_alignParentRight="true"/>
 
     <ImageView
@@ -74,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_below="@+id/liner1"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
@@ -84,23 +86,14 @@
             android:id="@+id/remenber_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="记住密码"
-            android:textSize="15dp"/>
-        <CheckBox
-            android:id="@+id/autologin_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"/>
+            android:layout_marginLeft="200dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="自动登录"
-            android:textSize="15dp"/>
+            android:text="记住密码"
+            android:textSize="15dp" />
+
 
     </LinearLayout>
 
@@ -129,15 +122,35 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/findpassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="135dp"
-        android:fontFamily="sans-serif"
-        android:text="找回密码"
-        android:textColor="#979A9A" />
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       android:layout_marginTop="550dp"
+       android:gravity="center">
+
+       <TextView
+           android:id="@+id/findpassword"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:fontFamily="sans-serif"
+           android:text="找回密码"
+           android:textColor="#979A9A"
+           android:textStyle="bold"
+           android:textSize="17dp"/>
+
+       <TextView
+           android:id="@+id/about"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="关于"
+           android:textColor="#979A9A"
+           android:layout_marginLeft="20dp"
+           android:textSize="17dp"
+           android:textStyle="bold"
+           />
+
+   </LinearLayout>
+
 
 </RelativeLayout>

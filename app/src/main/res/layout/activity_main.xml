@@ -6,8 +6,23 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:orientation="vertical"
-    android:background="@drawable/background"
     tools:context=".MainActivity">
 
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:background="@drawable/background"
+        android:layout_width="match_parent"
+        android:layout_height="635dp"
+        />
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/mian_BottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation_menu"
+        />
 
 </RelativeLayout>
