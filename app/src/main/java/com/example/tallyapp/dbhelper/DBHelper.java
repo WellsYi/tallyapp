@@ -13,7 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public DBHelper(Context context){
-        super(context, "user_info", null, 1);
+        super(context, "user_info", null, 2);
     }
 
     @Override
@@ -23,12 +23,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 "name varchar(20) not null," +
                 "username varchar(20) not null," +
                 "password varchar(20) not null," +
-                "remenber Integer default 0 not null)";
+                "remenber Integer default 0 not null)" ;
         db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if(oldVersion == 1){
+            try {
+                db.execSQL("ALTER TABLE users ADD COLUMN latestLogin INTEGER DEFAULT 0");
+                db.execSQL("UPDATE users SET latestLogin = 0");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
