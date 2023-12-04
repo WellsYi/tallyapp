@@ -71,6 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="47dp"
             android:textSize="17dp"
+
             android:background="@drawable/round_edittext_bg"
             android:hint="Password"
             android:paddingLeft="20dp"
