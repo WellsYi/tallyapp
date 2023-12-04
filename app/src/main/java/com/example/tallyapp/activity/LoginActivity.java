@@ -1,36 +1,27 @@
 package com.example.tallyapp.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListPopupWindow;
-import android.widget.PopupMenu;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tallyapp.MainActivity;
 import com.example.tallyapp.R;
-
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.entity.Users;
 import com.example.tallyapp.utils.ShowDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 
@@ -75,32 +66,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signup(){
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        signupButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 
     private void login(){
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = usernameET.getText().toString();
-                String password = passwordET.getText().toString();
-                if(!InformationJudgment(username, password)){
-                    Toast.makeText(LoginActivity.this, "登录失败！", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    updateTable(username);
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    Toast.makeText(LoginActivity.this, "欢迎登录", Toast.LENGTH_SHORT).show();
-                }
+        loginButton.setOnClickListener(v -> {
+            String username = usernameET.getText().toString();
+            String password = passwordET.getText().toString();
+            if(!InformationJudgment(username, password)){
+                Toast.makeText(LoginActivity.this, "登录失败！", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                updateTable(username);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                Toast.makeText(LoginActivity.this, "欢迎登录", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -108,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
     //验证信息是否合法
     private boolean InformationJudgment(String username, String password){
         //判断是否为空
-        if(username == null || password == null || username.equals("") || username.equals("")){
+        if(username == null || password == null || username.equals("")){
             showDialog.showDialog("密码、用户名不能为空！");
 //            Toast.makeText(LoginActivity.this, "密码、用户名不能为空！", Toast.LENGTH_SHORT).show();
             return false;
@@ -232,9 +217,7 @@ public class LoginActivity extends AppCompatActivity {
             } while (cursor.moveToNext());
             cursor.close();
         }
-        db.close();
+        // db.close();  如果关闭数据库会报错
         return userList;
     }
-
-
 }

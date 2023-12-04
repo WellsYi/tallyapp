@@ -1,8 +1,10 @@
 package com.example.tallyapp.entity;
 
+import androidx.annotation.NonNull;
+
 public class Users {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     public Users(String username, String password) {
         this.username = username;
@@ -15,5 +17,11 @@ public class Users {
 
     public String getPassword() {
         return password;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return username;
     }
 }
