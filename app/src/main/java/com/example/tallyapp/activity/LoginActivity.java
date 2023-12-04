@@ -14,17 +14,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListPopupWindow;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.tallyapp.MainActivity;
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.entity.Users;
+import com.example.tallyapp.fragment.AccountDetail;
 import com.example.tallyapp.utils.ShowDialog;
-
 import java.util.ArrayList;
-
 
 public class LoginActivity extends AppCompatActivity {
     private DBHelper dbHelper; //定义数据库帮助类对象
@@ -78,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
             String username = usernameET.getText().toString();
             String password = passwordET.getText().toString();
             if(!InformationJudgment(username, password)){
-                Toast.makeText(LoginActivity.this, "登录失败！", Toast.LENGTH_SHORT).show();
+                return;
             }
             else {
                 updateTable(username);
@@ -95,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
         //判断是否为空
         if(username == null || password == null || username.equals("")){
             showDialog.showDialog("密码、用户名不能为空！");
-//            Toast.makeText(LoginActivity.this, "密码、用户名不能为空！", Toast.LENGTH_SHORT).show();
             return false;
         }
         //判断用户是否存在
@@ -105,12 +101,10 @@ public class LoginActivity extends AppCompatActivity {
                 return true;
             }else {
                 showDialog.showDialog("密码不正确！");
-//                Toast.makeText(LoginActivity.this, "密码不正确！", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }else {
             showDialog.showDialog("用户不存在！");
-//            Toast.makeText(LoginActivity.this, "用户不存在！", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -182,6 +176,8 @@ public class LoginActivity extends AppCompatActivity {
                         usernameET.setText(selectedUsername);
                         // 设置对应的密码到 passwordET
                         passwordET.setText(selectedUser.getPassword());
+                        //勾选记住密码框
+                        remenberBox.setChecked(true);
 
                         listPopupWindow.dismiss();
                     });
@@ -198,8 +194,6 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
     }
-
-
 
     @SuppressLint("Range")
     private ArrayList<Users> getUsersWithRemenberFlag() {
