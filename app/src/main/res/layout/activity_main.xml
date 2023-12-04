@@ -14,21 +14,15 @@
         android:layout_width="match_parent"
         android:layout_height="635dp" >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20dp"
-            android:text="Hello"/>
     </FrameLayout>
-
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/mian_BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/hoary"
+        android:background="@drawable/round_edittext_bg"
         app:menu="@menu/bottom_navigation_menu"
         />
 
