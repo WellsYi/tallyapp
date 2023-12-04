@@ -1,7 +1,5 @@
 package com.example.tallyapp.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,13 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.utils.ShowDialog;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class SignUpActivity extends AppCompatActivity {
