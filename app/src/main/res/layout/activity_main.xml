@@ -11,10 +11,17 @@
 
     <FrameLayout
         android:id="@+id/content"
-        android:background="@drawable/background"
         android:layout_width="match_parent"
-        android:layout_height="635dp"
-        />
+        android:layout_height="635dp" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:text="Hello"/>
+    </FrameLayout>
+
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
