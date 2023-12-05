@@ -5,9 +5,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private ShowDialog showDialog;
     private EditText usernameET, passwordET;
-    private Button loginButton, signupButton;
+    private Button loginButton, signupButton, findpasswordButton, aboutButton;
 
     private CheckBox remenberBox;
     @Override
@@ -47,6 +51,12 @@ public class LoginActivity extends AppCompatActivity {
 
         //登录
         login();
+
+        //关于
+        aboutView();
+
+        //找回密码
+        findPasswordView();
     }
 
     private void initView(){
@@ -55,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.signinButton);
         signupButton = findViewById(R.id.signupButton);
         remenberBox = findViewById(R.id.remenber_box);
+        findpasswordButton = findViewById(R.id.findpassword);
+        aboutButton = findViewById(R.id.about);
         dbHelper = new DBHelper(LoginActivity.this);
         db = dbHelper.getWritableDatabase();
         showDialog = new ShowDialog(LoginActivity.this);
@@ -62,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    //登录界面跳转
     private void signup(){
         signupButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
@@ -70,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //登录事件
     private void login(){
         loginButton.setOnClickListener(v -> {
             String username = usernameET.getText().toString();
@@ -109,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    //检测用户是否存在
     private boolean isexist(String userName){
         Cursor cursor = db.rawQuery("select * from users where username= ?", new String[]{userName});
         if(cursor.getCount() == 0){
@@ -119,6 +134,7 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    //检测密码是否匹配
     private boolean isPasswordMatch(String userName, String password){
         Cursor cursor = db.rawQuery("SELECT password FROM users WHERE username = ?", new String[]{userName});
 
@@ -133,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
-
+    //更新登录状态
     private void updateTable(String username){
         ContentValues values = new ContentValues();
         if(remenberBox.isChecked()) {
@@ -150,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
+    //用户名框点击右侧事件
     @SuppressLint({"Range", "ClickableViewAccessibility"})
     private void checkRight() {
         usernameET.setOnTouchListener((v, event) -> {
@@ -195,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //获取记住密码用户信息
     @SuppressLint("Range")
     private ArrayList<Users> getUsersWithRemenberFlag() {
         ArrayList<Users> userList = new ArrayList<>();
@@ -213,5 +230,48 @@ public class LoginActivity extends AppCompatActivity {
         }
         // db.close();  如果关闭数据库会报错
         return userList;
+    }
+
+    //关于按钮事件
+    private void aboutView(){
+        aboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                aboutButton.setTextColor(Color.BLUE);
+                // 添加下划线
+                aboutButton.setPaintFlags(aboutButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        aboutButton.setTextColor(Color.parseColor("#979A9A"));
+
+                        // 移除下划线
+                        aboutButton.setPaintFlags(aboutButton.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+                    }
+                },100);
+                showDialog.showAboutDialog("    这是关于安卓的一次大作业\n组员：易杰、李宁静、魏康飞");
+            }
+        });
+    }
+
+    private void findPasswordView(){
+        findpasswordButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                findpasswordButton.setTextColor(Color.BLUE);
+                findpasswordButton.setPaintFlags(findpasswordButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        findpasswordButton.setTextColor(Color.parseColor("#979A9A"));
+                        // 移除下划线
+                        findpasswordButton.setPaintFlags(findpasswordButton.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+                    }
+                }, 100);
+                showDialog.showDialog("功能暂未实现！");
+            }
+        });
     }
 }

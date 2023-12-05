@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         //初始化
         initView();
         //默认显示界面
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, userFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, detailFragment).commit();
         //导航栏点击事件
         checkButtom();
 
