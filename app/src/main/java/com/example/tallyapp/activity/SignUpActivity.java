@@ -16,6 +16,10 @@ import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.utils.ShowDialog;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,16 +81,29 @@ public class SignUpActivity extends AppCompatActivity {
                     values.put("name", name.getText().toString());
                     values.put("username", userName.getText().toString());
                     values.put("password", password.getText().toString());
-                    db.insert("users", null, values);
-                    Toast.makeText(SignUpActivity.this, "注册成功",Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    values.put("registration_date", getCurrentBeijingDateTime()); //获取时间
+                    long newRowID = db.insert("users", null, values);
+                    if(newRowID != -1){
+                        Toast.makeText(SignUpActivity.this, "注册成功",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }else {
+                        Toast.makeText(SignUpActivity.this, "注册失败",Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                 }
             }
         });
 
     }
+    //获取时间
+    private String getCurrentBeijingDateTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai")); // 设置时区为北京时间
+        Date currentDate = new Date();
+        return sdf.format(currentDate);
+    }
+
 
     public static boolean containsAlphanumericCombination(String inputString) {
         // 正则表达式模式
