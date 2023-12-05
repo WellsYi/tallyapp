@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public DBHelper(Context context){
-        super(context, "user_info", null, 2);
+        super(context, "user_info", null, 4);
     }
 
     @Override
@@ -22,19 +22,31 @@ public class DBHelper extends SQLiteOpenHelper {
                 "name varchar(20) not null," +
                 "username varchar(20) not null," +
                 "password varchar(20) not null," +
-                "remenber Integer default 0 not null)" ;
+                "remenber Integer default 0 not null, " +
+                "registration_date DATETIME DEFAULT CURRENT_TIMESTAMP)";
         db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion == 1){
+        if (oldVersion == 3) {
             try {
-                db.execSQL("ALTER TABLE users ADD COLUMN latestLogin INTEGER DEFAULT 0");
-                db.execSQL("UPDATE users SET latestLogin = 0");
+                // 删除旧的users表
+                db.execSQL("DROP TABLE IF EXISTS users");
+
+                // 创建新的users表
+                String sql = "create table users(" +
+                        "id Integer primary key autoincrement, " +
+                        "name varchar(20) not null," +
+                        "username varchar(20) not null," +
+                        "password varchar(20) not null," +
+                        "remenber Integer default 0 not null, " +
+                        "registration_date DATETIME DEFAULT CURRENT_TIMESTAMP)";
+                db.execSQL(sql);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 }
