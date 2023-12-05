@@ -4,5 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lightwhite">#ECF7F6</color>
     <color name="hoary">#E8ECEF</color>
+    <color name="buttonblue">#287bde</color>
 
 </resources>

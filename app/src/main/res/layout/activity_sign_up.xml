@@ -80,7 +80,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/round_edittext_bg"
-        android:inputType="text" />
+        android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/repeatPasswordEditText"
@@ -94,7 +94,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/round_edittext_bg"
-        android:inputType="text" />
+        android:inputType="textPassword" />
 
 
     <Button

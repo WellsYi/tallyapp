@@ -81,7 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_below="@+id/liner1"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="22dp"
         android:orientation="horizontal"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
@@ -134,22 +134,24 @@
        android:layout_marginTop="550dp"
        android:gravity="center">
 
-       <TextView
+       <Button
            android:id="@+id/findpassword"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:fontFamily="sans-serif"
            android:text="找回密码"
            android:textColor="#979A9A"
+           android:backgroundTint="#fffbfe"
            android:textStyle="bold"
            android:textSize="17dp"/>
 
-       <TextView
+       <Button
            android:id="@+id/about"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="关于"
            android:textColor="#979A9A"
+           android:backgroundTint="#fffbfe"
            android:layout_marginLeft="20dp"
            android:textSize="17dp"
            android:textStyle="bold"
