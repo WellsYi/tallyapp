@@ -17,7 +17,7 @@
             android:id="@+id/back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="#fffbfe"
             android:text="返回"
             android:textColor="#979A9A"
             android:textSize="20dp"/>
