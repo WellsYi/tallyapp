@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment statisticsFragment;
     private Fragment userFragment;
     private Fragment accountingFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,28 +43,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //点击事件方法
-    private void checkButtom(){
-      bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-          if (item.getItemId() == R.id.menu_button_1){
-              replaceFragment(detailFragment);
-              return true;
-          } else if (item.getItemId() == R.id.menu_button_2) {
-              replaceFragment(statisticsFragment);
-              return true;
-          }else if (item.getItemId() == R.id.menu_button_3){
-              replaceFragment(userFragment);
-              return true;
-          }else if (item.getItemId() == R.id.menu_button_4){
-              replaceFragment(accountingFragment);
-              return true;
-          }
-          return false;
-      });
+    private void checkButtom() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            //根据当前页码点击时判断左右滑动过渡动画
+            if (item.getItemId() == R.id.menu_button_1 && getCurrentPage() > 1) {
+                replaceFragment(detailFragment, false);
+                return true;
+            } else if (item.getItemId() == R.id.menu_button_2 && getCurrentPage() == 1) {
+                replaceFragment(statisticsFragment, true);
+                return true;
+            } else if (item.getItemId() == R.id.menu_button_2 && getCurrentPage() > 2) {
+                replaceFragment(statisticsFragment, false);
+                return true;
+            } else if (item.getItemId() == R.id.menu_button_3 && getCurrentPage() > 3) {
+                replaceFragment(userFragment, false);
+                return true;
+            }else if (item.getItemId() == R.id.menu_button_3 && getCurrentPage() < 3) {
+                replaceFragment(userFragment, true);
+                return true;
+            } else if (item.getItemId() == R.id.menu_button_4) {
+                replaceFragment(accountingFragment, true); // 向右滑动
+                return true;
+            }
+            return false;
+        });
     }
 
-    private void replaceFragment(Fragment fragment) {
+
+    //添加左右滑动的过渡动画
+    private void replaceFragment(Fragment fragment, boolean isRightDirection) {
+        int enterAnim, exitAnim, popEnterAnim, popExitAnim;
+
+        if (isRightDirection) {
+            enterAnim = R.anim.slide_in_right;
+            exitAnim = R.anim.slide_out_left;
+            popEnterAnim = R.anim.slide_in_left;
+            popExitAnim = R.anim.slide_out_right;
+        } else {
+            enterAnim = R.anim.slide_in_left;
+            exitAnim = R.anim.slide_out_right;
+            popEnterAnim = R.anim.slide_in_right;
+            popExitAnim = R.anim.slide_out_left;
+        }
+
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
                 .replace(R.id.content, fragment)
+                .addToBackStack(null) // 如果需要添加到返回栈中
                 .commit();
     }
+
+
+    // 获取当前页码
+    private int getCurrentPage() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content);
+        if (currentFragment == detailFragment) {
+            return 1;
+        } else if (currentFragment == statisticsFragment) {
+            return 2;
+        } else if (currentFragment == userFragment) {
+            return 3;
+        } else if (currentFragment == accountingFragment) {
+            return 4;
+        }
+        return -1; // 如果当前 Fragment 不是预期的页面，返回 -1 或者其他值作为错误标识
+    }
+
+
 }
