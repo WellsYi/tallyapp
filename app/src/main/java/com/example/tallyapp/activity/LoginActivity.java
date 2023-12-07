@@ -2,7 +2,9 @@ package com.example.tallyapp.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -32,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private ShowDialog showDialog;
     private EditText usernameET, passwordET;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     private Button loginButton, signupButton, findpasswordButton, aboutButton;
 
     private CheckBox remenberBox;
@@ -69,8 +73,9 @@ public class LoginActivity extends AppCompatActivity {
         aboutButton = findViewById(R.id.about);
         dbHelper = new DBHelper(LoginActivity.this);
         db = dbHelper.getWritableDatabase();
+        sharedPref = getSharedPreferences("user_info", 0);
+        editor = sharedPref.edit();
         showDialog = new ShowDialog(LoginActivity.this);
-
 
     }
 
@@ -93,6 +98,8 @@ public class LoginActivity extends AppCompatActivity {
             }
             else {
                 updateTable(username);
+                editor.putString("username", username);
+                editor.commit();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
