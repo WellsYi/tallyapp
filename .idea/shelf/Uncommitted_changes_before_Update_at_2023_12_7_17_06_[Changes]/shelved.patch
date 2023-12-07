@@ -1,0 +1,680 @@
+Index: app/src/main/java/com/example/tallyapp/activity/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.tallyapp.activity;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.content.ContentValues;\r\nimport android.content.Intent;\r\nimport android.database.Cursor;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.graphics.Color;\r\nimport android.graphics.Paint;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.view.Gravity;\r\nimport android.view.MotionEvent;\r\nimport android.view.View;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.CheckBox;\r\nimport android.widget.EditText;\r\nimport android.widget.ListPopupWindow;\r\nimport android.widget.Toast;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport com.example.tallyapp.MainActivity;\r\nimport com.example.tallyapp.R;\r\nimport com.example.tallyapp.dbhelper.DBHelper;\r\nimport com.example.tallyapp.entity.Users;\r\nimport com.example.tallyapp.fragment.AccountDetail;\r\nimport com.example.tallyapp.utils.ShowDialog;\r\nimport java.util.ArrayList;\r\n\r\npublic class LoginActivity extends AppCompatActivity {\r\n    private DBHelper dbHelper; //定义数据库帮助类对象\r\n    private SQLiteDatabase db;\r\n    private ShowDialog showDialog;\r\n    private EditText usernameET, passwordET;\r\n    private Button loginButton, signupButton, findpasswordButton, aboutButton;\r\n\r\n    private CheckBox remenberBox;\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n\r\n        //初始化\r\n        initView();\r\n\r\n        //是否记住密码？\r\n\r\n        checkRight();\r\n        //注册\r\n        signup();\r\n\r\n        //登录\r\n        login();\r\n\r\n        //关于\r\n        aboutView();\r\n\r\n        //找回密码\r\n        findPasswordView();\r\n    }\r\n\r\n    private void initView(){\r\n        usernameET = findViewById(R.id.usernameEditText);\r\n        passwordET = findViewById(R.id.passwordEditText);\r\n        loginButton = findViewById(R.id.signinButton);\r\n        signupButton = findViewById(R.id.signupButton);\r\n        remenberBox = findViewById(R.id.remenber_box);\r\n        findpasswordButton = findViewById(R.id.findpassword);\r\n        aboutButton = findViewById(R.id.about);\r\n        dbHelper = new DBHelper(LoginActivity.this);\r\n        db = dbHelper.getWritableDatabase();\r\n        showDialog = new ShowDialog(LoginActivity.this);\r\n\r\n\r\n    }\r\n\r\n    //登录界面跳转\r\n    private void signup(){\r\n        signupButton.setOnClickListener(v -> {\r\n            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);\r\n            startActivity(intent);\r\n            finish();\r\n        });\r\n    }\r\n\r\n    //登录事件\r\n    private void login(){\r\n        loginButton.setOnClickListener(v -> {\r\n            String username = usernameET.getText().toString();\r\n            String password = passwordET.getText().toString();\r\n            if(!InformationJudgment(username, password)){\r\n                return;\r\n            }\r\n            else {\r\n                updateTable(username);\r\n                Intent intent = new Intent(LoginActivity.this, MainActivity.class);\r\n                startActivity(intent);\r\n                finish();\r\n                Toast.makeText(LoginActivity.this, \"欢迎登录\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n    }\r\n\r\n    //验证信息是否合法\r\n    private boolean InformationJudgment(String username, String password){\r\n        //判断是否为空\r\n        if(username == null || password == null || username.equals(\"\")){\r\n            showDialog.showDialog(\"密码、用户名不能为空！\");\r\n            return false;\r\n        }\r\n        //判断用户是否存在\r\n        if(isexist(username)){\r\n            //如果存在判断密码是否正确\r\n            if(isPasswordMatch(username, password)){\r\n                return true;\r\n            }else {\r\n                showDialog.showDialog(\"密码不正确！\");\r\n                return false;\r\n            }\r\n        }else {\r\n            showDialog.showDialog(\"用户不存在！\");\r\n            return false;\r\n        }\r\n    }\r\n\r\n    //检测用户是否存在\r\n    private boolean isexist(String userName){\r\n        Cursor cursor = db.rawQuery(\"select * from users where username= ?\", new String[]{userName});\r\n        if(cursor.getCount() == 0){\r\n            cursor.close();\r\n            return false;\r\n        }\r\n        cursor.close();\r\n        return true;\r\n    }\r\n\r\n    //检测密码是否匹配\r\n    private boolean isPasswordMatch(String userName, String password){\r\n        Cursor cursor = db.rawQuery(\"SELECT password FROM users WHERE username = ?\", new String[]{userName});\r\n\r\n        if(cursor != null && cursor.moveToFirst()) {\r\n            @SuppressLint(\"Range\") String passwordFromDB = cursor.getString(cursor.getColumnIndex(\"password\"));\r\n            cursor.close();\r\n\r\n            // 检查输入的密码与数据库中密码是否匹配\r\n            return password.equals(passwordFromDB);\r\n        }\r\n\r\n        return false;\r\n    }\r\n\r\n    //更新登录状态\r\n    private void updateTable(String username){\r\n        ContentValues values = new ContentValues();\r\n        if(remenberBox.isChecked()) {\r\n            values.put(\"remenber\", 1);\r\n        }\r\n        else {\r\n            values.put(\"remenber\", 0);\r\n        }\r\n\r\n        // 更新特定用户的信息\r\n        SQLiteDatabase db = dbHelper.getWritableDatabase();\r\n        db.update(\"users\", values, \"username = ?\", new String[]{username});\r\n        db.close();\r\n    }\r\n\r\n\r\n    //用户名框点击右侧事件\r\n    @SuppressLint({\"Range\", \"ClickableViewAccessibility\"})\r\n    private void checkRight() {\r\n        usernameET.setOnTouchListener((v, event) -> {\r\n            final int DRAWABLE_RIGHT = 2;\r\n\r\n            if (event.getAction() == MotionEvent.ACTION_UP) {\r\n                if (event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {\r\n                    ListPopupWindow listPopupWindow = new ListPopupWindow(LoginActivity.this);\r\n\r\n                    // 获取带有 remenber 标记的用户列表\r\n                    ArrayList<Users> userList = getUsersWithRemenberFlag();\r\n\r\n                    // 创建适配器\r\n                    ArrayAdapter<Users> adapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_list_item_1, userList);\r\n                    listPopupWindow.setAdapter(adapter);\r\n\r\n                    // 设置列表项点击事件\r\n                    listPopupWindow.setOnItemClickListener((parent, view, position, id) -> {\r\n                        Users selectedUser = userList.get(position);\r\n                        String selectedUsername = selectedUser.getUsername();\r\n\r\n                        // 设置选定的用户名到 usernameET\r\n                        usernameET.setText(selectedUsername);\r\n                        // 设置对应的密码到 passwordET\r\n                        passwordET.setText(selectedUser.getPassword());\r\n                        //勾选记住密码框\r\n                        remenberBox.setChecked(true);\r\n\r\n                        listPopupWindow.dismiss();\r\n                    });\r\n\r\n                    // 设置ListPopupWindow的锚点及显示位置\r\n                    listPopupWindow.setAnchorView(usernameET);\r\n                    listPopupWindow.setDropDownGravity(Gravity.END);\r\n\r\n                    // 显示ListPopupWindow\r\n                    listPopupWindow.show();\r\n                    return true;\r\n                }\r\n            }\r\n            return false;\r\n        });\r\n    }\r\n\r\n    //获取记住密码用户信息\r\n    @SuppressLint(\"Range\")\r\n    private ArrayList<Users> getUsersWithRemenberFlag() {\r\n        ArrayList<Users> userList = new ArrayList<>();\r\n\r\n        SQLiteDatabase db = dbHelper.getReadableDatabase();\r\n        Cursor cursor = db.query(\"users\", new String[]{\"username\", \"password\"}, \"remenber = ?\", new String[]{\"1\"}, null, null, null);\r\n\r\n        if (cursor != null && cursor.moveToFirst()) {\r\n            do {\r\n                String username = cursor.getString(cursor.getColumnIndex(\"username\"));\r\n                String password = cursor.getString(cursor.getColumnIndex(\"password\"));\r\n                Users user = new Users(username, password);\r\n                userList.add(user);\r\n            } while (cursor.moveToNext());\r\n            cursor.close();\r\n        }\r\n        // db.close();  如果关闭数据库会报错\r\n        return userList;\r\n    }\r\n\r\n    //关于按钮事件\r\n    private void aboutView(){\r\n        aboutButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                aboutButton.setTextColor(Color.BLUE);\r\n                // 添加下划线\r\n                aboutButton.setPaintFlags(aboutButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);\r\n                new Handler().postDelayed(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        aboutButton.setTextColor(Color.parseColor(\"#979A9A\"));\r\n\r\n                        // 移除下划线\r\n                        aboutButton.setPaintFlags(aboutButton.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));\r\n                    }\r\n                },100);\r\n                showDialog.showAboutDialog(\"    这是关于安卓的一次大作业\\n组员：易杰、李宁静、魏康飞\");\r\n            }\r\n        });\r\n    }\r\n\r\n    private void findPasswordView(){\r\n        findpasswordButton.setOnClickListener(new View.OnClickListener() {\r\n\r\n            @Override\r\n            public void onClick(View v) {\r\n                findpasswordButton.setTextColor(Color.BLUE);\r\n                findpasswordButton.setPaintFlags(findpasswordButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);\r\n\r\n                new Handler().postDelayed(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        findpasswordButton.setTextColor(Color.parseColor(\"#979A9A\"));\r\n                        // 移除下划线\r\n                        findpasswordButton.setPaintFlags(findpasswordButton.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));\r\n                    }\r\n                }, 100);\r\n                showDialog.showDialog(\"功能暂未实现！\");\r\n            }\r\n        });\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/tallyapp/activity/LoginActivity.java b/app/src/main/java/com/example/tallyapp/activity/LoginActivity.java
+--- a/app/src/main/java/com/example/tallyapp/activity/LoginActivity.java	(revision e79d59c9f14c4fb5ac9c619c272689fd6d46f323)
++++ b/app/src/main/java/com/example/tallyapp/activity/LoginActivity.java	(date 1701936780865)
+@@ -2,7 +2,9 @@
+ 
+ import android.annotation.SuppressLint;
+ import android.content.ContentValues;
++import android.content.Context;
+ import android.content.Intent;
++import android.content.SharedPreferences;
+ import android.database.Cursor;
+ import android.database.sqlite.SQLiteDatabase;
+ import android.graphics.Color;
+@@ -32,6 +34,8 @@
+     private SQLiteDatabase db;
+     private ShowDialog showDialog;
+     private EditText usernameET, passwordET;
++    private SharedPreferences sharedPref;
++    private SharedPreferences.Editor editor;
+     private Button loginButton, signupButton, findpasswordButton, aboutButton;
+ 
+     private CheckBox remenberBox;
+@@ -69,9 +73,10 @@
+         aboutButton = findViewById(R.id.about);
+         dbHelper = new DBHelper(LoginActivity.this);
+         db = dbHelper.getWritableDatabase();
++        sharedPref = getSharedPreferences("user_info", 0);
++        editor = sharedPref.edit();
+         showDialog = new ShowDialog(LoginActivity.this);
+ 
+-
+     }
+ 
+     //登录界面跳转
+@@ -93,6 +98,8 @@
+             }
+             else {
+                 updateTable(username);
++                editor.putString("username", username);
++                editor.commit();
+                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                 startActivity(intent);
+                 finish();
+Index: app/src/main/res/layout/fragment_user_info.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FrameLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"vertical\"\r\n    tools:context=\".fragment.UserInfo\">\r\n\r\n    <!-- TODO: Update blank fragment layout -->\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:background=\"#a1c8f7\"\r\n        android:orientation=\"vertical\">\r\n        <TextView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:layout_marginLeft=\"30dp\"\r\n            android:layout_marginTop=\"40dp\"\r\n            android:text = \"name\"\r\n            android:textSize=\"25dp\" />\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"horizontal\"\r\n            android:gravity=\"center\"\r\n            android:layout_marginTop=\"20dp\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center\"\r\n                android:layout_gravity=\"center\">\r\n\r\n                <TextView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:textStyle=\"bold\"\r\n                    android:textSize=\"16dp\"\r\n                    android:text=\"days\"/>\r\n                <TextView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"8dp\"\r\n                    android:text=\"记账总天数\"/>\r\n            </LinearLayout>\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center\"\r\n                android:layout_gravity=\"center\"\r\n                android:layout_marginLeft=\"70dp\">\r\n\r\n                <TextView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Accounting times\"\r\n                    android:textStyle=\"bold\"\r\n                    android:textSize=\"16dp\"/>\r\n                <TextView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"8dp\"\r\n                    android:text=\"记账总笔数\"/>\r\n            </LinearLayout>\r\n\r\n\r\n\r\n        </LinearLayout>\r\n\r\n    </LinearLayout>\r\n\r\n\r\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_user_info.xml b/app/src/main/res/layout/fragment_user_info.xml
+--- a/app/src/main/res/layout/fragment_user_info.xml	(revision e79d59c9f14c4fb5ac9c619c272689fd6d46f323)
++++ b/app/src/main/res/layout/fragment_user_info.xml	(date 1701937963076)
+@@ -10,9 +10,10 @@
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:background="#a1c8f7"
++        android:background="@drawable/user_background"
+         android:orientation="vertical">
+         <TextView
++            android:id="@+id/nameTextView"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_marginLeft="30dp"
+@@ -35,10 +36,11 @@
+                 android:layout_gravity="center">
+ 
+                 <TextView
++                    android:id="@+id/daysTextView"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:textStyle="bold"
+-                    android:textSize="16dp"
++                    android:textSize="22dp"
+                     android:text="days"/>
+                 <TextView
+                     android:layout_width="wrap_content"
+@@ -56,6 +58,7 @@
+                 android:layout_marginLeft="70dp">
+ 
+                 <TextView
++                    android:id="@+id/timesTextView"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Accounting times"
+@@ -68,11 +71,48 @@
+                     android:text="记账总笔数"/>
+             </LinearLayout>
+ 
++        </LinearLayout>
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            android:layout_marginTop="30dp"
++            android:orientation="vertical">
++
++            <ListView
++                android:id="@+id/setting_list"
++                android:layout_width="fill_parent"
++                android:layout_height="wrap_content"
++                android:layout_margin="10dip"
++                android:background="@drawable/shape_bg_listview"
++                android:cacheColorHint="#00000000"
++                android:divider="@color/black"
++                android:dividerHeight="1px"
++                android:scrollbars="none" />
+ 
+-
++            <ListView
++                android:id="@+id/setting_list1"
++                android:layout_width="fill_parent"
++                android:layout_height="wrap_content"
++                android:layout_marginTop="30dp"
++                android:layout_margin="10dip"
++                android:background="@drawable/shape_bg_listview"
++                android:dividerHeight="1px"
++                android:divider="#cccccc"
++                android:scrollbars="none"
++                android:cacheColorHint="#00000000" />
+         </LinearLayout>
+ 
++        <Button
++            android:id="@+id/exitButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:text="退出登录"
++            android:textSize="20dp"
++            android:textColor="#c75450"
++            android:layout_marginTop="20dp"
++            android:layout_gravity="center"
++            android:layout_margin="10dp"
++            android:backgroundTint="@color/white"/>
+     </LinearLayout>
+ 
+-
+ </FrameLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/tallyapp/fragment/UserInfo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.tallyapp.fragment;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.tallyapp.R;\r\n\r\n/**\r\n * A simple {@link Fragment} subclass.\r\n * Use the {@link UserInfo#newInstance} factory method to\r\n * create an instance of this fragment.\r\n */\r\npublic class UserInfo extends Fragment {\r\n\r\n    // TODO: Rename parameter arguments, choose names that match\r\n    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER\r\n    private static final String ARG_PARAM1 = \"param1\";\r\n    private static final String ARG_PARAM2 = \"param2\";\r\n\r\n    // TODO: Rename and change types of parameters\r\n    private String mParam1;\r\n    private String mParam2;\r\n\r\n    public UserInfo() {\r\n        // Required empty public constructor\r\n    }\r\n\r\n    /**\r\n     * Use this factory method to create a new instance of\r\n     * this fragment using the provided parameters.\r\n     *\r\n     * @param param1 Parameter 1.\r\n     * @param param2 Parameter 2.\r\n     * @return A new instance of fragment UserInfo.\r\n     */\r\n    // TODO: Rename and change types and number of parameters\r\n    public static UserInfo newInstance(String param1, String param2) {\r\n        UserInfo fragment = new UserInfo();\r\n        Bundle args = new Bundle();\r\n        args.putString(ARG_PARAM1, param1);\r\n        args.putString(ARG_PARAM2, param2);\r\n        fragment.setArguments(args);\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        if (getArguments() != null) {\r\n            mParam1 = getArguments().getString(ARG_PARAM1);\r\n            mParam2 = getArguments().getString(ARG_PARAM2);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        return inflater.inflate(R.layout.fragment_user_info, container, false);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/tallyapp/fragment/UserInfo.java b/app/src/main/java/com/example/tallyapp/fragment/UserInfo.java
+--- a/app/src/main/java/com/example/tallyapp/fragment/UserInfo.java	(revision e79d59c9f14c4fb5ac9c619c272689fd6d46f323)
++++ b/app/src/main/java/com/example/tallyapp/fragment/UserInfo.java	(date 1701939657145)
+@@ -1,13 +1,38 @@
+ package com.example.tallyapp.fragment;
+ 
++import android.annotation.SuppressLint;
++import android.content.Context;
++import android.content.Intent;
++import android.content.SharedPreferences;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
+ import android.os.Bundle;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.ArrayAdapter;
++import android.widget.Button;
++import android.widget.EditText;
++import android.widget.ImageView;
++import android.widget.ListView;
++import android.widget.TextView;
+ 
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ 
+ import com.example.tallyapp.R;
++import com.example.tallyapp.activity.LoginActivity;
++import com.example.tallyapp.activity.SignUpActivity;
++import com.example.tallyapp.dbhelper.DBHelper;
++
++import java.text.ParseException;
++import java.text.SimpleDateFormat;
++import java.util.ArrayList;
++import java.util.Date;
++import java.util.List;
++import java.util.Locale;
++import java.util.TimeZone;
+ 
+ /**
+  * A simple {@link Fragment} subclass.
+@@ -23,7 +48,16 @@
+ 
+     // TODO: Rename and change types of parameters
+     private String mParam1;
++    private String day;
+     private String mParam2;
++    private ListView listView1, listView2;
++    private SharedPreferences sharedPref;
++    private String username;
++    private TextView nameText, daysText, timesText;
++
++    private DBHelper dbHelper; //定义数据库帮助类对象
++    private SQLiteDatabase db;
++    private Button exitButton;
+ 
+     public UserInfo() {
+         // Required empty public constructor
+@@ -60,6 +94,161 @@
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+         // Inflate the layout for this fragment
+-        return inflater.inflate(R.layout.fragment_user_info, container, false);
++        //初始化
++        View view = inflater.inflate(R.layout.fragment_user_info, container, false);
++        initView(view);
++        //退出
++        exit();
++       //获取信息
++        getName_Days_Times();
++        //获取列表信息
++        getListInfo();
++
++        return view;
++    }
++
++    private void initView(View view){
++        listView1 = view.findViewById(R.id.setting_list);
++        listView2 = view.findViewById(R.id.setting_list1);
++        nameText = view.findViewById(R.id.nameTextView);
++        daysText = view.findViewById(R.id.daysTextView);
++        timesText = view.findViewById(R.id.timesTextView);
++        daysText = view.findViewById(R.id.daysTextView);
++        timesText = view.findViewById(R.id.timesTextView);
++        exitButton = view.findViewById(R.id.exitButton);
++        sharedPref = requireContext().getSharedPreferences("user_info", 0);
++        username = sharedPref.getString("username", "");
++        dbHelper = new DBHelper(UserInfo.this.getActivity());
++        db = dbHelper.getWritableDatabase();
++        day = String.valueOf(calculateDaysRegistered(username));
++    }
++
++    private void getListInfo(){
++        List<String> data = new ArrayList<>();
++        data.add("用户信息");
++        data.add("修改密码");
++        data.add("修改资料");
++
++        // 创建自定义的适配器
++        ArrayAdapter<String> list1_Adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_layout, R.id.textView, data) {
++            @NonNull
++            @Override
++            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
++                View rowView = super.getView(position, convertView, parent);
++
++                // 设置图标
++                ImageView icView = rowView.findViewById(R.id.icView);
++                ImageView iconView = rowView.findViewById(R.id.iconView);
++                TextView textView = rowView.findViewById(R.id.textView);
++                // 根据不同的位置设置不同的图标，这里需要根据实际情况进行修改
++                if (position == 0) {
++                    icView.setImageResource(R.drawable.ic_user_info);
++                    iconView.setImageResource(R.drawable.ic_more_simples);
++                } else if (position == 1) {
++                    icView.setImageResource(R.drawable.ic_set_password);
++                    iconView.setImageResource(R.drawable.ic_more_simples);
++                } else if (position == 2) {
++                    icView.setImageResource(R.drawable.ic_set_info);
++                    iconView.setImageResource(R.drawable.ic_more_simples);
++                }
++                return rowView;
++            }
++        };
++
++        ArrayAdapter<String> list2_Adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_layout, R.id.textView, data) {
++            @NonNull
++            @Override
++            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
++                View rowView = super.getView(position, convertView, parent);
++
++                // 设置图标
++                ImageView icView = rowView.findViewById(R.id.icView);
++                ImageView iconView = rowView.findViewById(R.id.iconView);
++                TextView textView = rowView.findViewById(R.id.textView);
++                // 根据不同的位置设置不同的图标，这里需要根据实际情况进行修改
++                if (position == 0) {
++                    icView.setImageResource(R.drawable.ic_user_info);
++                    iconView.setImageResource(R.drawable.ic_more_simples);
++                    textView.setText("注销用户");
++                } else if (position == 1) {
++                    icView.setImageResource(R.drawable.ic_set_password);
++                    iconView.setImageResource(R.drawable.ic_more_simples);
++                    textView.setText("我的账单");
++                } else if (position == 2) {
++                    icView.setImageResource(R.drawable.ic_set_info);
++                    iconView.setImageResource(R.drawable.ic_more_simples);
++                    textView.setText("清除账单");
++                }
++                return rowView;
++            }
++        };
++        listView1.setAdapter(list1_Adapter);
++        listView2.setAdapter(list2_Adapter);
++    }
++
++    private String getCurrentBeijingDateTime() {
++        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
++        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai")); // 设置时区为北京时间
++        Date currentDate = new Date();
++        return sdf.format(currentDate);
+     }
++
++    //获取注册时间
++    @SuppressLint("Range")
++    private String getRegistrationDateByUsername(SQLiteDatabase db, String username) {
++        String registrationDate = null;
++        Cursor cursor = db.rawQuery("SELECT registration_date FROM users WHERE username = ?", new String[]{username});
++
++        if (cursor.moveToFirst()) {
++            registrationDate = cursor.getString(cursor.getColumnIndex("registration_date"));
++        }
++
++        //cursor.close();
++        return registrationDate;
++    }
++    //获取天数
++    private int calculateDaysRegistered(String username){
++        String registrationDateStr = getRegistrationDateByUsername(db, username);
++        if (registrationDateStr != null) {
++            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
++            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
++            try {
++                // 获取当前北京时间
++                String currentBeijingDateTime = getCurrentBeijingDateTime();
++                Date currentDate = sdf.parse(currentBeijingDateTime);
++
++                // 将数据库中获取的注册时间转换为日期对象
++                Date registrationDate = sdf.parse(registrationDateStr);
++
++                // 计算时间差
++                long diffInMillis = currentDate.getTime() - registrationDate.getTime();
++                int daysDiff = (int) (diffInMillis / (1000 * 60 * 60 * 24));
++
++                return daysDiff;
++            } catch (ParseException e) {
++                e.printStackTrace();
++            }
++        }
++        return -1; // 表示无法计算天数差
++    }
++
++    //退出登录
++    private void exit(){
++        exitButton.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Intent intent = new Intent(requireContext(), LoginActivity.class);
++                startActivity(intent);}
++        });
++    }
++    //获取昵称,记账天数，记账笔数
++    private void getName_Days_Times(){
++        Cursor cursor = db.rawQuery("select name from users where username= ?", new String[]{username});
++        if(cursor.moveToFirst()){
++            @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex("name"));
++            nameText.setText(name);
++            daysText.setText(day);
++        }
++    }
++
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/tallyapp/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.tallyapp;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.MenuItem;\r\nimport android.widget.Button;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.tallyapp.fragment.AccountDetail;\r\nimport com.example.tallyapp.fragment.Accounting;\r\nimport com.example.tallyapp.fragment.Statistics;\r\nimport com.example.tallyapp.fragment.UserInfo;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n    private BottomNavigationView bottomNavigationView;\r\n\r\n    private Fragment detailFragment;\r\n    private Fragment statisticsFragment;\r\n    private Fragment userFragment;\r\n    private Fragment accountingFragment;\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n        //初始化\r\n        initView();\r\n        //默认显示界面\r\n        getSupportFragmentManager().beginTransaction().replace(R.id.content, detailFragment).commit();\r\n        //导航栏点击事件\r\n        checkButtom();\r\n\r\n    }\r\n\r\n    private void initView(){\r\n        bottomNavigationView = findViewById(R.id.mian_BottomNavigationView);\r\n        detailFragment = new AccountDetail();\r\n        statisticsFragment = new Statistics();\r\n        userFragment = new UserInfo();\r\n        accountingFragment = new Accounting();\r\n    }\r\n\r\n    //点击事件方法\r\n    private void checkButtom(){\r\n      bottomNavigationView.setOnNavigationItemSelectedListener(item -> {\r\n          if (item.getItemId() == R.id.menu_button_1){\r\n              replaceFragment(detailFragment);\r\n              return true;\r\n          } else if (item.getItemId() == R.id.menu_button_2) {\r\n              replaceFragment(statisticsFragment);\r\n              return true;\r\n          }else if (item.getItemId() == R.id.menu_button_3){\r\n              replaceFragment(userFragment);\r\n              return true;\r\n          }else if (item.getItemId() == R.id.menu_button_4){\r\n              replaceFragment(accountingFragment);\r\n              return true;\r\n          }\r\n          return false;\r\n      });\r\n    }\r\n\r\n    private void replaceFragment(Fragment fragment) {\r\n        getSupportFragmentManager().beginTransaction()\r\n                .replace(R.id.content, fragment)\r\n                .commit();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/tallyapp/MainActivity.java b/app/src/main/java/com/example/tallyapp/MainActivity.java
+--- a/app/src/main/java/com/example/tallyapp/MainActivity.java	(revision e79d59c9f14c4fb5ac9c619c272689fd6d46f323)
++++ b/app/src/main/java/com/example/tallyapp/MainActivity.java	(date 1701844171210)
+@@ -20,6 +20,7 @@
+     private Fragment statisticsFragment;
+     private Fragment userFragment;
+     private Fragment accountingFragment;
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+@@ -42,28 +43,71 @@
+     }
+ 
+     //点击事件方法
+-    private void checkButtom(){
+-      bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+-          if (item.getItemId() == R.id.menu_button_1){
+-              replaceFragment(detailFragment);
+-              return true;
+-          } else if (item.getItemId() == R.id.menu_button_2) {
+-              replaceFragment(statisticsFragment);
+-              return true;
+-          }else if (item.getItemId() == R.id.menu_button_3){
+-              replaceFragment(userFragment);
+-              return true;
+-          }else if (item.getItemId() == R.id.menu_button_4){
+-              replaceFragment(accountingFragment);
+-              return true;
+-          }
+-          return false;
+-      });
++    private void checkButtom() {
++        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
++            //根据当前页码点击时判断左右滑动过渡动画
++            if (item.getItemId() == R.id.menu_button_1 && getCurrentPage() > 1) {
++                replaceFragment(detailFragment, false);
++                return true;
++            } else if (item.getItemId() == R.id.menu_button_2 && getCurrentPage() == 1) {
++                replaceFragment(statisticsFragment, true);
++                return true;
++            } else if (item.getItemId() == R.id.menu_button_2 && getCurrentPage() > 2) {
++                replaceFragment(statisticsFragment, false);
++                return true;
++            } else if (item.getItemId() == R.id.menu_button_3 && getCurrentPage() > 3) {
++                replaceFragment(userFragment, false);
++                return true;
++            }else if (item.getItemId() == R.id.menu_button_3 && getCurrentPage() < 3) {
++                replaceFragment(userFragment, true);
++                return true;
++            } else if (item.getItemId() == R.id.menu_button_4) {
++                replaceFragment(accountingFragment, true); // 向右滑动
++                return true;
++            }
++            return false;
++        });
+     }
+ 
+-    private void replaceFragment(Fragment fragment) {
++
++    //添加左右滑动的过渡动画
++    private void replaceFragment(Fragment fragment, boolean isRightDirection) {
++        int enterAnim, exitAnim, popEnterAnim, popExitAnim;
++
++        if (isRightDirection) {
++            enterAnim = R.anim.slide_in_right;
++            exitAnim = R.anim.slide_out_left;
++            popEnterAnim = R.anim.slide_in_left;
++            popExitAnim = R.anim.slide_out_right;
++        } else {
++            enterAnim = R.anim.slide_in_left;
++            exitAnim = R.anim.slide_out_right;
++            popEnterAnim = R.anim.slide_in_right;
++            popExitAnim = R.anim.slide_out_left;
++        }
++
+         getSupportFragmentManager().beginTransaction()
++                .setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
+                 .replace(R.id.content, fragment)
++                .addToBackStack(null) // 如果需要添加到返回栈中
+                 .commit();
+     }
++
++
++    // 获取当前页码
++    private int getCurrentPage() {
++        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content);
++        if (currentFragment == detailFragment) {
++            return 1;
++        } else if (currentFragment == statisticsFragment) {
++            return 2;
++        } else if (currentFragment == userFragment) {
++            return 3;
++        } else if (currentFragment == accountingFragment) {
++            return 4;
++        }
++        return -1; // 如果当前 Fragment 不是预期的页面，返回 -1 或者其他值作为错误标识
++    }
++
++
+ }
+Index: app/src/main/res/values/arrays.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/arrays.xml b/app/src/main/res/values/arrays.xml
+new file mode 100644
+--- /dev/null	(date 1701845712025)
++++ b/app/src/main/res/values/arrays.xml	(date 1701845712025)
+@@ -0,0 +1,12 @@
++<resources>
++    <!-- Reply Preference -->
++    <string-array name="reply_entries">
++        <item>Reply</item>
++        <item>Reply to all</item>
++    </string-array>
++
++    <string-array name="reply_values">
++        <item>reply</item>
++        <item>reply_all</item>
++    </string-array>
++</resources>
+\ No newline at end of file
+Index: app/src/main/res/xml/root_preferences.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/xml/root_preferences.xml b/app/src/main/res/xml/root_preferences.xml
+new file mode 100644
+--- /dev/null	(date 1701845712231)
++++ b/app/src/main/res/xml/root_preferences.xml	(date 1701845712231)
+@@ -0,0 +1,35 @@
++<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
++
++    <PreferenceCategory app:title="@string/messages_header">
++
++        <EditTextPreference
++            app:key="signature"
++            app:title="@string/signature_title"
++            app:useSimpleSummaryProvider="true" />
++
++        <ListPreference
++            app:defaultValue="reply"
++            app:entries="@array/reply_entries"
++            app:entryValues="@array/reply_values"
++            app:key="reply"
++            app:title="@string/reply_title"
++            app:useSimpleSummaryProvider="true" />
++
++    </PreferenceCategory>
++
++    <PreferenceCategory app:title="@string/sync_header">
++
++        <SwitchPreferenceCompat
++            app:key="sync"
++            app:title="@string/sync_title" />
++
++        <SwitchPreferenceCompat
++            app:dependency="sync"
++            app:key="attachment"
++            app:summaryOff="@string/attachment_summary_off"
++            app:summaryOn="@string/attachment_summary_on"
++            app:title="@string/attachment_title" />
++
++    </PreferenceCategory>
++
++</PreferenceScreen>
+\ No newline at end of file
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id(\"com.android.application\")\r\n}\r\n\r\nandroid {\r\n    namespace = \"com.example.tallyapp\"\r\n    compileSdk = 34\r\n\r\n    defaultConfig {\r\n        applicationId = \"com.example.tallyapp\"\r\n        minSdk = 24\r\n        targetSdk = 33\r\n        versionCode = 1\r\n        versionName = \"1.0\"\r\n\r\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            isMinifyEnabled = false\r\n            proguardFiles(\r\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\r\n                \"proguard-rules.pro\"\r\n            )\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility = JavaVersion.VERSION_1_8\r\n        targetCompatibility = JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation(\"androidx.appcompat:appcompat:1.6.1\")\r\n    implementation(\"com.google.android.material:material:1.10.0\")\r\n    implementation(\"androidx.constraintlayout:constraintlayout:2.1.4\")\r\n    testImplementation(\"junit:junit:4.13.2\")\r\n    androidTestImplementation(\"androidx.test.ext:junit:1.1.5\")\r\n    androidTestImplementation(\"androidx.test.espresso:espresso-core:3.5.1\")\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision e79d59c9f14c4fb5ac9c619c272689fd6d46f323)
++++ b/app/build.gradle.kts	(date 1701845712139)
+@@ -36,6 +36,7 @@
+     implementation("androidx.appcompat:appcompat:1.6.1")
+     implementation("com.google.android.material:material:1.10.0")
+     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
++    implementation("androidx.preference:preference:1.2.0")
+     testImplementation("junit:junit:4.13.2")
+     androidTestImplementation("androidx.test.ext:junit:1.1.5")
+     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">TallyApp</string>\r\n    <!-- TODO: Remove or change this placeholder text -->\r\n    <string name=\"hello_blank_fragment\">Hello blank fragment</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision e79d59c9f14c4fb5ac9c619c272689fd6d46f323)
++++ b/app/src/main/res/values/strings.xml	(date 1701845712016)
+@@ -2,4 +2,18 @@
+     <string name="app_name">TallyApp</string>
+     <!-- TODO: Remove or change this placeholder text -->
+     <string name="hello_blank_fragment">Hello blank fragment</string>
++    <!-- Preference Titles -->
++    <string name="messages_header">Messages</string>
++    <string name="sync_header">Sync</string>
++
++    <!-- Messages Preferences -->
++    <string name="signature_title">Your signature</string>
++    <string name="reply_title">Default reply action</string>
++
++    <!-- Sync Preferences -->
++    <string name="sync_title">Sync email periodically</string>
++    <string name="attachment_title">Download incoming attachments</string>
++    <string name="attachment_summary_on">Automatically download attachments for incoming emails
++    </string>
++    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/layout/list_item_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/list_item_layout.xml b/app/src/main/res/layout/list_item_layout.xml
+new file mode 100644
+--- /dev/null	(date 1701928388436)
++++ b/app/src/main/res/layout/list_item_layout.xml	(date 1701928388436)
+@@ -0,0 +1,38 @@
++<!-- list_item_layout.xml -->
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    android:orientation="horizontal">
++
++    <!-- 图标 -->
++    <ImageView
++        android:id="@+id/icView"
++        android:layout_width="40dp"
++        android:layout_height="40dp"
++        android:padding="10dp"
++        android:layout_gravity="center"/>
++    <TextView
++        android:id="@+id/textView"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:textSize="18sp"
++        android:textColor="#000000"
++        android:padding="10dp" />
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:gravity="right">
++
++        <!-- 图标 -->
++        <ImageView
++            android:id="@+id/iconView"
++            android:layout_width="40dp"
++            android:layout_height="40dp"
++            android:padding="10dp"
++            android:src="@drawable/ic_more_simples" />
++    </LinearLayout>
++
++
++
++</LinearLayout>
+Index: app/src/main/res/drawable/shape_bg_listview.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/shape_bg_listview.xml b/app/src/main/res/drawable/shape_bg_listview.xml
+new file mode 100644
+--- /dev/null	(date 1701866112253)
++++ b/app/src/main/res/drawable/shape_bg_listview.xml	(date 1701866112253)
+@@ -0,0 +1,21 @@
++<?xml version="1.0" encoding="utf-8"?>
++<shape xmlns:android="http://schemas.android.com/apk/res/android"
++    android:shape="rectangle" >
++
++    <gradient
++        android:angle="0"
++        android:endColor="#ffffff"
++        android:startColor="#ffffff" />
++
++    <stroke
++        android:width="3px"
++        android:color="#cccccc" />
++
++    <!--  <solid android:color="@android:color/white" /> -->
++
++    <corners
++        android:bottomLeftRadius="30px"
++        android:bottomRightRadius="30px"
++        android:topLeftRadius="30px"
++        android:topRightRadius="30px" />
++</shape>
+\ No newline at end of file
