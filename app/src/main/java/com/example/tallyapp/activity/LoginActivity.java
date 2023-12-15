@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -76,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences("user_info", 0);
         editor = sharedPref.edit();
         showDialog = new ShowDialog(LoginActivity.this);
-
     }
 
     //登录界面跳转

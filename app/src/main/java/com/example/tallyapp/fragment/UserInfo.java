@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.activity.LoginActivity;
+import com.example.tallyapp.activity.UserInformationActivity;
 import com.example.tallyapp.dbhelper.DBHelper;
 
 import java.text.ParseException;
@@ -45,7 +47,7 @@ public class UserInfo extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private String day;
+    private String day, times;
     private String mParam2;
     private ListView listView1, listView2;
     private SharedPreferences sharedPref;
@@ -117,7 +119,9 @@ public class UserInfo extends Fragment {
         username = sharedPref.getString("username", "");
         dbHelper = new DBHelper(UserInfo.this.getActivity());
         db = dbHelper.getWritableDatabase();
-        day = String.valueOf(calculateDaysRegistered(username));
+        day = String.valueOf(calculateDaysRegistered(username) + 1);
+        times = String.valueOf(getTimes());
+
     }
 
     private void getListInfo(){
@@ -148,6 +152,25 @@ public class UserInfo extends Fragment {
                     icView.setImageResource(R.drawable.ic_set_info);
                     iconView.setImageResource(R.drawable.ic_more_simples);
                 }
+
+                //listView点击事件
+                rowView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch (position){
+                            case 0:
+                                Intent intent = new Intent(requireContext(), UserInformationActivity.class);
+                                startActivity(intent);
+                                break;
+                            case 1:
+                                Toast.makeText(getActivity(), "修改密码", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2:
+                                Toast.makeText(getActivity(), "修改资料", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                });
                 return rowView;
             }
         };
@@ -176,6 +199,25 @@ public class UserInfo extends Fragment {
                     iconView.setImageResource(R.drawable.ic_more_simples);
                     textView.setText("清除账单");
                 }
+
+                //listView点击事件
+                rowView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch (position){
+                            case 0:
+                                Intent intent = new Intent(requireContext(), UserInformationActivity.class);
+                                startActivity(intent);
+                                break;
+                            case 1:
+                                Toast.makeText(getActivity(), "我的账单", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2:
+                                Toast.makeText(getActivity(), "修改资料", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                });
                 return rowView;
             }
         };
@@ -245,7 +287,38 @@ public class UserInfo extends Fragment {
             @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex("name"));
             nameText.setText(name);
             daysText.setText(day);
+            timesText.setText(times);
         }
+    }
+    //这个sql语句也能查询收入和支出总和
+    private int getTimes(){
+        String sql = "SELECT\n" +
+                "TotalIncomes.TotalCount + TotalExpenses.TotalCount AS Count\n" +
+                "FROM\n" +
+                "(\n" +
+                "    SELECT\n" +
+                "        SUM(CASE WHEN income.userID = users.id THEN income.Amount ELSE 0 END) AS TotalAmount,\n" +
+                "        COUNT(CASE WHEN income.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
+                "    FROM income\n" +
+                "    JOIN users ON income.userID = users.id\n" +
+                "    WHERE users.username = ?\n" +
+                ") AS TotalIncomes,\n" +
+                "(\n" +
+                "    SELECT\n" +
+                "        SUM(CASE WHEN expense.userID = users.id THEN Expense.Amount ELSE 0 END) AS TotalAmount,\n" +
+                "        COUNT(CASE WHEN expense.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
+                "    FROM expense\n" +
+                "    JOIN users ON expense.userID = users.id\n" +
+                "    WHERE users.username = ?\n" +
+                ") AS TotalExpenses;";
+
+        Cursor cursor = db.rawQuery(sql, new String[]{username, username});
+
+        if(cursor.moveToFirst()){
+            @SuppressLint("Range") int count  = cursor.getInt(cursor.getColumnIndex("Count"));
+            return count;
+        }
+        return -1;
     }
 
 }

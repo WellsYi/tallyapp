@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import com.example.tallyapp.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +25,9 @@ public class Accounting extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private BottomNavigationView bottomNavigationView;
+    private Fragment expenseFragment, incomeFragment;
 
     public Accounting() {
         // Required empty public constructor
@@ -60,6 +64,57 @@ public class Accounting extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_accounting, container, false);
+        View view = inflater.inflate(R.layout.fragment_accounting, container, false);
+        initView(view);
+        if (savedInstanceState == null) {
+            // 如果是第一次加载，替换默认布局为支出界面
+            AccountingExpense expenseFragment = new AccountingExpense();
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.accounting_content, expenseFragment)
+                    .commit();
+        }
+        checkButtom();
+        return view;
+    }
+
+    private void initView( View view){
+        bottomNavigationView = view.findViewById(R.id.accounting_BottonNavigationView);
+        expenseFragment = new AccountingExpense();
+        incomeFragment = new AccountingIncome();
+    }
+
+    private void replaceFragment(Fragment fragment, boolean isRightDirection) {
+        int enterAnim, exitAnim, popEnterAnim, popExitAnim;
+
+        if (isRightDirection) {
+            enterAnim = R.anim.slide_in_right;
+            exitAnim = R.anim.slide_out_left;
+            popEnterAnim = R.anim.slide_in_left;
+            popExitAnim = R.anim.slide_out_right;
+        } else {
+            enterAnim = R.anim.slide_in_left;
+            exitAnim = R.anim.slide_out_right;
+            popEnterAnim = R.anim.slide_in_right;
+            popExitAnim = R.anim.slide_out_left;
+        }
+
+        getChildFragmentManager().beginTransaction()
+                .setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
+                .replace(R.id.accounting_content, fragment)
+                .addToBackStack(null) // 如果需要添加到返回栈中
+                .commit();
+    }
+
+    private void checkButtom() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            //根据当前页码点击时判断左右滑动过渡动画
+            if (item.getItemId() == R.id.expense_type) {
+                replaceFragment(expenseFragment, false);
+                return true;
+            } else {
+                replaceFragment(incomeFragment, true);
+                return true;
+            }
+        });
     }
 }

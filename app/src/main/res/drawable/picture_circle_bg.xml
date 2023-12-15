@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#ffffff" /> <!-- 设置背景颜色 -->
+    <size
+        android:width="120dp"
+    android:height="120dp" />
+</shape>

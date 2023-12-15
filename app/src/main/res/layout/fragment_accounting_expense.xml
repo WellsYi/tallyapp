@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="370dp"
+    android:layout_height="480dp"
+    android:layout_gravity="center"
+    android:layout_marginBottom="25dp"
+    android:background="@drawable/round_button_bg"
+    tools:context=".fragment.AccountingExpense">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/selectedDateTextView"
+            android:layout_width="330dp"
+            android:layout_height="30dp"
+            android:textSize="20dp"
+            android:drawableRight="@android:drawable/arrow_down_float"
+            android:drawablePadding="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/round_edittext_bg"
+            android:backgroundTint="@color/white"
+            android:text="Date" />
+        
+
+    </LinearLayout>
+
+
+
+</FrameLayout>
