@@ -297,7 +297,6 @@ public class UserInfo extends Fragment {
                 "FROM\n" +
                 "(\n" +
                 "    SELECT\n" +
-                "        SUM(CASE WHEN income.userID = users.id THEN income.Amount ELSE 0 END) AS TotalAmount,\n" +
                 "        COUNT(CASE WHEN income.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
                 "    FROM income\n" +
                 "    JOIN users ON income.userID = users.id\n" +
@@ -305,7 +304,6 @@ public class UserInfo extends Fragment {
                 ") AS TotalIncomes,\n" +
                 "(\n" +
                 "    SELECT\n" +
-                "        SUM(CASE WHEN expense.userID = users.id THEN Expense.Amount ELSE 0 END) AS TotalAmount,\n" +
                 "        COUNT(CASE WHEN expense.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
                 "    FROM expense\n" +
                 "    JOIN users ON expense.userID = users.id\n" +

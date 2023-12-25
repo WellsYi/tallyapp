@@ -223,7 +223,6 @@ public class LoginActivity extends AppCompatActivity {
     private ArrayList<Users> getUsersWithRemenberFlag() {
         ArrayList<Users> userList = new ArrayList<>();
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query("users", new String[]{"username", "password"}, "remenber = ?", new String[]{"1"}, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {

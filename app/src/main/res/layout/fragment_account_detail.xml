@@ -3,14 +3,130 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".fragment.AccountDetail">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="detail"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/image_title"
+            android:scaleType="centerInside"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="20dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/yearEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2023年"
+            android:textSize="13dp"
+            android:textColor="@android:color/darker_gray"
+            android:background="@drawable/round_edittext_bg"
+            android:backgroundTint="#fffbfe"/>
+
+
+        <EditText
+            android:id="@+id/monthEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12月"
+            android:background="@drawable/round_edittext_bg"
+            android:backgroundTint="#fffbfe"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:focusable="false"
+            android:layout_marginTop="10dp"
+            android:drawableRight="@android:drawable/arrow_down_float"
+            android:onClick="showYearMonthPickerDialog" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="30dp"/>
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="107dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/income_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="70dp"
+                android:background="@drawable/round_edittext_bg"
+                android:backgroundTint="#fffbfe"
+                android:text="收入"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="13dp" />
+
+            <EditText
+                android:id="@+id/income_amount_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_edittext_bg"
+                android:backgroundTint="#fffbfe"
+                android:text="0.00"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/expense_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="70dp"
+                android:background="@drawable/round_edittext_bg"
+                android:backgroundTint="#fffbfe"
+                android:text="支出"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="13dp" />
+
+            <EditText
+                android:id="@+id/expense_amount_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_edittext_bg"
+                android:backgroundTint="#fffbfe"
+                android:text="0.00"
+                android:textSize="15dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:padding="10dp"
+        android:background="@drawable/shape_bg_listview"
+        android:layout_marginTop="140dp"/>
 
 </FrameLayout>

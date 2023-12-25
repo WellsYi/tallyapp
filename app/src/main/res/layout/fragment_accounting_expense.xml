@@ -1,37 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="370dp"
-    android:layout_height="480dp"
-    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_marginBottom="25dp"
-    android:background="@drawable/round_button_bg"
+    android:orientation="vertical"
     tools:context=".fragment.AccountingExpense">
 
     <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:orientation="vertical"
-        android:gravity="center">
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        tools:ignore="UselessParent">
+
 
         <TextView
-            android:id="@+id/selectedDateTextView"
-            android:layout_width="330dp"
-            android:layout_height="30dp"
-            android:textSize="20dp"
-            android:drawableRight="@android:drawable/arrow_down_float"
-            android:drawablePadding="10dp"
-            android:paddingRight="10dp"
-            android:background="@drawable/round_edittext_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expense Title："
+            android:textSize="20dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:backgroundTint="@color/white"
+                android:background="@drawable/round_edittext_bg">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="6dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_expense_title"/>
+
+                <EditText
+                    android:id="@+id/selectedTitleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/round_edittext_bg"
+                    android:backgroundTint="@color/white"
+                    android:drawableRight="@android:drawable/arrow_down_float"
+                    android:paddingRight="20dp"
+                    android:text="点击输入类型"
+                    android:textSize="20dp"
+                    android:textColor="#67646d"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"/>
+            </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Amount:"
+            android:textSize="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
             android:backgroundTint="@color/white"
-            android:text="Date" />
-        
+            android:layout_marginTop="15dp"
+            android:background="@drawable/round_edittext_bg">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="6dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_expense_amount"/>
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/writeInAmountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/round_edittext_bg"
+                android:backgroundTint="@color/white"
+                android:paddingRight="20dp"
+                android:text="输入金额"
+                android:textSize="20dp"
+                android:textColor="#67646d"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date:"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"/>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/round_edittext_bg">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="6dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_calendar"/>
+
+            <EditText
+                android:id="@+id/selectedDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:paddingRight="20dp"
+                android:text="点击输入日期"
+                android:textColor="#67646d"
+                android:textSize="20dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Rremark:"
+            android:textSize="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/white"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/round_edittext_bg">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="6dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_expense_remark"/>
+
+            <EditText
+                android:id="@+id/writeInRemarkTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/round_edittext_bg"
+                android:backgroundTint="@color/white"
+                android:paddingRight="20dp"
+                android:text="输入备注"
+                android:textSize="20dp"
+                android:textColor="#67646d"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/addExpenseButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Expense"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="#3b3dbf"/>
+        </LinearLayout>
 
 </FrameLayout>
