@@ -2,14 +2,12 @@ package com.example.tallyapp.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -26,14 +24,13 @@ import com.example.tallyapp.MainActivity;
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.entity.Users;
-import com.example.tallyapp.fragment.AccountDetail;
-import com.example.tallyapp.utils.ShowDialog;
+import com.example.tallyapp.utils.Utils;
 import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
     private DBHelper dbHelper; //定义数据库帮助类对象
     private SQLiteDatabase db;
-    private ShowDialog showDialog;
+    private Utils utils;
     private EditText usernameET, passwordET;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
@@ -76,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
         sharedPref = getSharedPreferences("user_info", 0);
         editor = sharedPref.edit();
-        showDialog = new ShowDialog(LoginActivity.this);
+        utils = new Utils(LoginActivity.this);
     }
 
     //登录界面跳转
@@ -112,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean InformationJudgment(String username, String password){
         //判断是否为空
         if(username == null || password == null || username.equals("")){
-            showDialog.showDialog("密码、用户名不能为空！");
+            utils.showDialog("密码、用户名不能为空！");
             return false;
         }
         //判断用户是否存在
@@ -121,11 +118,11 @@ public class LoginActivity extends AppCompatActivity {
             if(isPasswordMatch(username, password)){
                 return true;
             }else {
-                showDialog.showDialog("密码不正确！");
+                utils.showDialog("密码不正确！");
                 return false;
             }
         }else {
-            showDialog.showDialog("用户不存在！");
+            utils.showDialog("用户不存在！");
             return false;
         }
     }
@@ -255,7 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                         aboutButton.setPaintFlags(aboutButton.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
                     }
                 },100);
-                showDialog.showAboutDialog("    这是关于安卓的一次大作业\n组员：易杰、李宁静、魏康飞");
+                utils.showAboutDialog("    这是关于安卓的一次大作业\n组员：易杰、李宁静、魏康飞");
             }
         });
     }
@@ -276,7 +273,7 @@ public class LoginActivity extends AppCompatActivity {
                         findpasswordButton.setPaintFlags(findpasswordButton.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
                     }
                 }, 100);
-                showDialog.showDialog("功能暂未实现！");
+                utils.showDialog("功能暂未实现！");
             }
         });
     }

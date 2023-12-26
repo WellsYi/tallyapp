@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
-import com.example.tallyapp.utils.ShowDialog;
+import com.example.tallyapp.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private Button backButton, signupButton;
     private EditText userName, name, password, repeatPassword;
-    private ShowDialog showDialog;
+    private Utils utils;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
         repeatPassword = findViewById(R.id.repeatPasswordEditText);
         dbHelper = new DBHelper(SignUpActivity.this);
         db = dbHelper.getWritableDatabase();
-        showDialog = new ShowDialog(SignUpActivity.this);
+        utils = new Utils(SignUpActivity.this);
     }
 
     private void backToLogin(){
@@ -120,27 +120,27 @@ public class SignUpActivity extends AppCompatActivity {
         //判断条件
         //判断用户是否已经注册
         if(isexist(userName)){
-            showDialog.showDialog("用户已存在！");
+            utils.showDialog("用户已存在！");
             return false;
         }
 
         //填写是否规范
         if(password == null || password.equals("") || name == null || name.equals("") || userName == null || userName.equals("")){
-            showDialog.showDialog("昵称、用户名、密码不能为空");
+            utils.showDialog("昵称、用户名、密码不能为空");
             return false;
         }
         if(password.length() < 8 || password.length() > 16){
-            showDialog.showDialog("密码长度应是8-16");
+            utils.showDialog("密码长度应是8-16");
             return false;
         }
         if(!containsAlphanumericCombination(password)) {
-            showDialog.showDialog("密码应包含大小写字母与数字");
+            utils.showDialog("密码应包含大小写字母与数字");
             return false;
         }
 
         if (!password.equals(repeatPassword)){
             //Toast.makeText(MainActivity.this, "两次密码不一致！", Toast.LENGTH_SHORT).show();
-            showDialog.showDialog("两次密码不一致");
+            utils.showDialog("两次密码不一致");
             return false;
         }
         return true;

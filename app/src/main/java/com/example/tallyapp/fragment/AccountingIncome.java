@@ -24,9 +24,8 @@ import android.widget.ListPopupWindow;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
-import com.example.tallyapp.entity.Expense;
 import com.example.tallyapp.entity.Income;
-import com.example.tallyapp.utils.ShowDialog;
+import com.example.tallyapp.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,7 +58,7 @@ public class AccountingIncome extends Fragment {
     private String username, formattedDate, selectedtype, selectedtypename;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private ShowDialog showDialog;
+    private Utils utils;
     private int year, month, day;
     private Calendar calendar;
 
@@ -131,7 +130,7 @@ public class AccountingIncome extends Fragment {
         db = dbHelper.getWritableDatabase();
         sharedPref = requireContext().getSharedPreferences("user_info", 0);
         username = sharedPref.getString("username", "");
-        showDialog = new ShowDialog(requireContext());
+        utils = new Utils(requireContext());
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -188,20 +187,6 @@ public class AccountingIncome extends Fragment {
         // datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
 
-    //获取收入类型
-    private ArrayList<String> getIncomeTypes() {
-        ArrayList<String> IncomeTypesList = new ArrayList<>();
-        Cursor cursor = db.rawQuery("SELECT typename FROM income_type", null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                @SuppressLint("Range") String typeName = cursor.getString(cursor.getColumnIndex("typename"));
-                IncomeTypesList.add(typeName);
-            } while (cursor.moveToNext());
-        }
-
-        return IncomeTypesList;
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private void showIncomeTypesAndWriteIn() {
         selectedTitleEditText.setOnTouchListener((v, event) -> {
@@ -211,7 +196,7 @@ public class AccountingIncome extends Fragment {
                     ListPopupWindow listPopupWindow = new ListPopupWindow(requireContext());
 
                     //获取类型列表
-                    ArrayList<String> incometypes = getIncomeTypes();
+                    ArrayList<String> incometypes = utils.getIncomeTypes(db);
                     // 创建适配器
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, incometypes);
                     listPopupWindow.setAdapter(adapter);
@@ -294,11 +279,11 @@ public class AccountingIncome extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if(!getIncomeTypes().contains(selectedTitleEditText.getText().toString()) || !writeInAmountEditText.getText().toString().matches("[0-9]+")){
+                    if(!utils.getIncomeTypes(db).contains(selectedTitleEditText.getText().toString()) || !writeInAmountEditText.getText().toString().matches("[0-9]+")){
                         return;
                     }else {
                         saveIncome();
-                        showDialog.showDialog("添加成功！");
+                        utils.showDialog("添加成功！");
                         selectedTitleEditText.setText("点击输入类型");
                         writeInAmountEditText.setText("输入金额");
                         selectedDateEditText.setText("点击输入金额");

@@ -6,11 +6,9 @@
     tools:context=".fragment.Statistics">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="statistics"
-        android:gravity="center"
-        android:textSize="30dp" />
+        android:layout_height="300dp" />
 
 </FrameLayout>

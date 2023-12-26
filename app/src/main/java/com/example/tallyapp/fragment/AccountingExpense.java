@@ -12,9 +12,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,14 +22,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListPopupWindow;
-import android.widget.TextView;
 
 import com.example.tallyapp.R;
-import com.example.tallyapp.activity.LoginActivity;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.entity.Expense;
-import com.example.tallyapp.entity.Users;
-import com.example.tallyapp.utils.ShowDialog;
+import com.example.tallyapp.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,7 +67,7 @@ public class AccountingExpense extends Fragment {
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private ShowDialog showDialog;
+    private Utils utils;
 
     public AccountingExpense() {
         // Required empty public constructor
@@ -149,7 +143,7 @@ public class AccountingExpense extends Fragment {
         db = dbHelper.getWritableDatabase();
         sharedPref = requireContext().getSharedPreferences("user_info", 0);
         username = sharedPref.getString("username", "");
-        showDialog = new ShowDialog(requireContext());
+        utils = new Utils(requireContext());
 
     }
 
@@ -307,17 +301,18 @@ public class AccountingExpense extends Fragment {
                         return;
                     }else {
                         saveExpense();
-                        showDialog.showDialog("添加成功！");
-                        selectedTitleTextView.setText("点击输入类型");
-                        writeInAmountTextView.setText("输入金额");
-                        selectedDateTextView.setText("点击输入日期");
-                        writeInRemarkTextView.setText("输入备注");
+                        utils.showDialog("添加成功！");
+                        // 更新完成后，刷新页面或重新加载数据
+                        refreshFragmentData();
                     }
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
+    }
+    private void refreshFragmentData() {
+        
     }
 
 }

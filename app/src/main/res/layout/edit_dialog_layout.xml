@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/rewritetypeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_edittext_bg"
+        android:hint="修改的类型"
+        android:paddingLeft="15dp"
+        android:layout_margin="30dp"
+        android:drawableRight="@android:drawable/arrow_down_float"
+        android:paddingRight="20dp"/>
+    <EditText
+        android:id="@+id/rewriteamountEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_edittext_bg"
+        android:hint="修改的金额"
+        android:paddingLeft="15dp"
+        android:layout_margin="30dp"/>
+    <EditText
+        android:id="@+id/rewritedateEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_edittext_bg"
+        android:hint="修改的日期"
+        android:paddingLeft="15dp"
+        android:layout_margin="30dp"
+        android:drawableRight="@android:drawable/arrow_down_float"
+        android:paddingRight="20dp"/>
+
+</LinearLayout>

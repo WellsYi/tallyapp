@@ -24,6 +24,7 @@ import com.example.tallyapp.R;
 import com.example.tallyapp.activity.LoginActivity;
 import com.example.tallyapp.activity.UserInformationActivity;
 import com.example.tallyapp.dbhelper.DBHelper;
+import com.example.tallyapp.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,6 +58,7 @@ public class UserInfo extends Fragment {
     private DBHelper dbHelper; //定义数据库帮助类对象
     private SQLiteDatabase db;
     private Button exitButton;
+    private Utils utils;
 
     public UserInfo() {
         // Required empty public constructor
@@ -89,6 +91,7 @@ public class UserInfo extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -120,7 +123,50 @@ public class UserInfo extends Fragment {
         dbHelper = new DBHelper(UserInfo.this.getActivity());
         db = dbHelper.getWritableDatabase();
         day = String.valueOf(calculateDaysRegistered(username) + 1);
-        times = String.valueOf(getTimes());
+        times = String.valueOf(getTimes(username));
+        utils = new Utils(getContext());
+
+    }
+
+    //获取记账次数
+    public int getTimes(String username){
+        String sql = "SELECT\n" +
+                "TotalIncomes.TotalCount + TotalExpenses.TotalCount AS Count\n" +
+                "FROM\n" +
+                "(\n" +
+                "    SELECT\n" +
+                "        COUNT(CASE WHEN income.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
+                "    FROM income\n" +
+                "    JOIN users ON income.userID = users.id\n" +
+                "    WHERE users.username = ?\n" +
+                ") AS TotalIncomes,\n" +
+                "(\n" +
+                "    SELECT\n" +
+                "        COUNT(CASE WHEN expense.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
+                "    FROM expense\n" +
+                "    JOIN users ON expense.userID = users.id\n" +
+                "    WHERE users.username = ?\n" +
+                ") AS TotalExpenses;";
+
+        Cursor cursor = db.rawQuery(sql, new String[]{username, username});
+
+        if(cursor.moveToFirst()){
+            @SuppressLint("Range") int count  = cursor.getInt(cursor.getColumnIndex("Count"));
+            return count;
+        }
+        return -1;
+    }
+
+    //清除账单
+    private void deleteTally(){
+        // 清空 expense 表
+        String deleteExpenseQuery = "DELETE FROM expense WHERE userID = (SELECT id FROM users WHERE username = ?)";
+        db.execSQL(deleteExpenseQuery, new String[]{username});
+
+        // 清空 income 表
+        String deleteIncomeQuery = "DELETE FROM income WHERE userID = (SELECT id FROM users WHERE username = ?)";
+        db.execSQL(deleteIncomeQuery, new String[]{username});
+        exit();
 
     }
 
@@ -128,7 +174,7 @@ public class UserInfo extends Fragment {
         List<String> data = new ArrayList<>();
         data.add("用户信息");
         data.add("修改密码");
-        data.add("修改资料");
+        data.add("清除账单");
 
         // 创建自定义的适配器
         ArrayAdapter<String> list1_Adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_layout, R.id.text, data) {
@@ -166,7 +212,7 @@ public class UserInfo extends Fragment {
                                 Toast.makeText(getActivity(), "修改密码", Toast.LENGTH_SHORT).show();
                                 break;
                             case 2:
-                                Toast.makeText(getActivity(), "修改资料", Toast.LENGTH_SHORT).show();
+                                showCustomDialog();
                                 break;
                         }
                     }
@@ -174,6 +220,7 @@ public class UserInfo extends Fragment {
                 return rowView;
             }
         };
+
 
         ArrayAdapter<String> list2_Adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_layout, R.id.text, data) {
             @NonNull
@@ -225,12 +272,6 @@ public class UserInfo extends Fragment {
         listView2.setAdapter(list2_Adapter);
     }
 
-    private String getCurrentBeijingDateTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai")); // 设置时区为北京时间
-        Date currentDate = new Date();
-        return sdf.format(currentDate);
-    }
 
     //获取注册时间
     @SuppressLint("Range")
@@ -244,6 +285,13 @@ public class UserInfo extends Fragment {
 
         //cursor.close();
         return registrationDate;
+    }
+    //获取北京时间
+    public String getCurrentBeijingDateTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai")); // 设置时区为北京时间
+        Date currentDate = new Date();
+        return sdf.format(currentDate);
     }
     //获取天数
     private int calculateDaysRegistered(String username){
@@ -290,33 +338,29 @@ public class UserInfo extends Fragment {
             timesText.setText(times);
         }
     }
-    //这个sql语句也能查询收入和支出总和
-    private int getTimes(){
-        String sql = "SELECT\n" +
-                "TotalIncomes.TotalCount + TotalExpenses.TotalCount AS Count\n" +
-                "FROM\n" +
-                "(\n" +
-                "    SELECT\n" +
-                "        COUNT(CASE WHEN income.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
-                "    FROM income\n" +
-                "    JOIN users ON income.userID = users.id\n" +
-                "    WHERE users.username = ?\n" +
-                ") AS TotalIncomes,\n" +
-                "(\n" +
-                "    SELECT\n" +
-                "        COUNT(CASE WHEN expense.userID = users.id THEN 1 ELSE NULL END) AS TotalCount\n" +
-                "    FROM expense\n" +
-                "    JOIN users ON expense.userID = users.id\n" +
-                "    WHERE users.username = ?\n" +
-                ") AS TotalExpenses;";
 
-        Cursor cursor = db.rawQuery(sql, new String[]{username, username});
-
-        if(cursor.moveToFirst()){
-            @SuppressLint("Range") int count  = cursor.getInt(cursor.getColumnIndex("Count"));
-            return count;
-        }
-        return -1;
+    private void showCustomDialog() {
+        // 调用 showDialog 方法显示一个带有自定义布局的对话框
+        utils.showDialog("是否清除账单？\n如果清除账单将退出登录!",
+                new Utils.DialogCallback() {
+                    @Override
+                    public void onConfirm() {
+                        deleteTally();
+                        Intent intent1 = new Intent(getContext(), LoginActivity.class);
+                        startActivity(intent1);
+                        Toast.makeText(getActivity(), "清除成功", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Utils.DialogCallback() {
+                    @Override
+                    public void onConfirm() {
+                        // 取消操作的逻辑，可以为空或者添加相应的处理
+                    }
+                }
+        );
     }
+
+
+
 
 }
