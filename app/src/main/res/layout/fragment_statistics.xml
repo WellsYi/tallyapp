@@ -6,8 +6,8 @@
     tools:context=".fragment.Statistics">
 
     <!-- TODO: Update blank fragment layout -->
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart"
+    <com.github.mikephil.charting.charts.HorizontalBarChart
+        android:id="@+id/horizontal_bar_chart"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
 

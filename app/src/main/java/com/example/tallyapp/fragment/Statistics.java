@@ -1,5 +1,6 @@
 package com.example.tallyapp.fragment;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.tallyapp.R;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -72,27 +76,42 @@ public class Statistics extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_statistics, container, false);
-        BarChart barChart = view.findViewById(R.id.chart);
+        HorizontalBarChart horizontalBarChart = view.findViewById(R.id.horizontal_bar_chart);
 
         // 创建一个数据集用于存储柱状图的数据
         ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0, 1));
-        entries.add(new BarEntry(1, 4));
-        entries.add(new BarEntry(2, 2));
-        entries.add(new BarEntry(3, 6));
-        entries.add(new BarEntry(4, 8));
+        entries.add(new BarEntry(1, 10)); // 示例数据
+        entries.add(new BarEntry(2, 20)); // 示例数据
+        entries.add(new BarEntry(3, 30)); // 示例数据
+        entries.add(new BarEntry(4, 25)); // 示例数据
+        entries.add(new BarEntry(5, 15)); // 示例数据
 
         // 创建数据集并设置标签
-        BarDataSet dataSet = new BarDataSet(entries, "Label");
+        BarDataSet dataSet = new BarDataSet(entries, "Sample Data");
 
         // 创建 BarData 对象并将数据集添加到其中
         BarData barData = new BarData(dataSet);
+        // 获取X轴和Y轴
+        XAxis xAxis = horizontalBarChart.getXAxis();
+        YAxis leftyAxis = horizontalBarChart.getAxisLeft(); // 或者右侧的Y轴，根据你的需求
+        YAxis rightAxis = horizontalBarChart.getAxisRight();
+
+        // 移除网格线
+        xAxis.setDrawGridLines(false);
+        leftyAxis.setDrawGridLines(false);
+        rightAxis.setDrawGridLines(false);
 
         // 设置数据
-        barChart.setData(barData);
+        horizontalBarChart.setData(barData);
+
+        Description description = new Description();
+        description.setText("Horizontal Bar Chart Example");
+        description.setTextSize(15);
+        description.setTextAlign(Paint.Align.RIGHT); // 设置文本对齐方式为右对齐
+        horizontalBarChart.setDescription(description);
 
         // 刷新图表显示
-        barChart.invalidate();
+        horizontalBarChart.invalidate();
 
         return view;
     }

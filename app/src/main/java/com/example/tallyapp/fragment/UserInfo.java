@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.activity.LoginActivity;
+import com.example.tallyapp.activity.SetPasswordActivity;
 import com.example.tallyapp.activity.UserInformationActivity;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.utils.Utils;
@@ -91,6 +92,18 @@ public class UserInfo extends Fragment {
         }
     }
 
+    //刷新界面
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 在这里执行刷新操作，可以是重新加载数据或调用特定的刷新方法
+        refreshFragmentData();
+    }
+
+    private void refreshFragmentData(){
+        //获取信息
+        getName_Days_Times();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -111,7 +124,6 @@ public class UserInfo extends Fragment {
 
     private void initView(View view){
         listView1 = view.findViewById(R.id.setting_list);
-        listView2 = view.findViewById(R.id.setting_list1);
         nameText = view.findViewById(R.id.nameTextView);
         daysText = view.findViewById(R.id.daysTextView);
         timesText = view.findViewById(R.id.timesTextView);
@@ -195,7 +207,7 @@ public class UserInfo extends Fragment {
                     icView.setImageResource(R.drawable.ic_set_password);
                     iconView.setImageResource(R.drawable.ic_more_simples);
                 } else if (position == 2) {
-                    icView.setImageResource(R.drawable.ic_set_info);
+                    icView.setImageResource(R.mipmap.ic_user_delate);
                     iconView.setImageResource(R.drawable.ic_more_simples);
                 }
 
@@ -209,7 +221,8 @@ public class UserInfo extends Fragment {
                                 startActivity(intent);
                                 break;
                             case 1:
-                                Toast.makeText(getActivity(), "修改密码", Toast.LENGTH_SHORT).show();
+                                intent = new Intent(requireContext(), SetPasswordActivity.class);
+                                startActivity(intent);
                                 break;
                             case 2:
                                 showCustomDialog();
@@ -220,56 +233,7 @@ public class UserInfo extends Fragment {
                 return rowView;
             }
         };
-
-
-        ArrayAdapter<String> list2_Adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_layout, R.id.text, data) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View rowView = super.getView(position, convertView, parent);
-
-                // 设置图标
-                ImageView icView = rowView.findViewById(R.id.icon);
-                ImageView iconView = rowView.findViewById(R.id.icon1);
-                TextView textView = rowView.findViewById(R.id.text);
-                // 根据不同的位置设置不同的图标，这里需要根据实际情况进行修改
-                if (position == 0) {
-                    icView.setImageResource(R.drawable.ic_user_info);
-                    iconView.setImageResource(R.drawable.ic_more_simples);
-                    textView.setText("注销用户");
-                } else if (position == 1) {
-                    icView.setImageResource(R.drawable.ic_set_password);
-                    iconView.setImageResource(R.drawable.ic_more_simples);
-                    textView.setText("我的账单");
-                } else if (position == 2) {
-                    icView.setImageResource(R.drawable.ic_set_info);
-                    iconView.setImageResource(R.drawable.ic_more_simples);
-                    textView.setText("清除账单");
-                }
-
-                //listView点击事件
-                rowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        switch (position){
-                            case 0:
-                                Intent intent = new Intent(requireContext(), UserInformationActivity.class);
-                                startActivity(intent);
-                                break;
-                            case 1:
-                                Toast.makeText(getActivity(), "我的账单", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 2:
-                                Toast.makeText(getActivity(), "修改资料", Toast.LENGTH_SHORT).show();
-                                break;
-                        }
-                    }
-                });
-                return rowView;
-            }
-        };
         listView1.setAdapter(list1_Adapter);
-        listView2.setAdapter(list2_Adapter);
     }
 
 

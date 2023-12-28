@@ -16,6 +16,9 @@
         android:theme="@style/Theme.TallyApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.UserInformationActivity"
             android:exported="false" />
         <activity

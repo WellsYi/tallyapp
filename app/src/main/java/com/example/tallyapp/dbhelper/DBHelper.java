@@ -12,27 +12,26 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public DBHelper(Context context){
-        super(context, "user_info", null, 5);
+        super(context, "user_info", null, 6);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table users(" +
-                "id Integer primary key autoincrement, " +
-                "name varchar(20) not null," +
-                "username varchar(20) not null," +
-                "password varchar(20) not null," +
-                "remenber Integer default 0 not null, " +
-                "registration_date DATETIME DEFAULT CURRENT_TIMESTAMP)";
-        db.execSQL(sql);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 4) {
+        if (oldVersion == 5) {
             try {
-                // 删除旧的users表
+                // 删除旧表
                 db.execSQL("DROP TABLE IF EXISTS users");
+                db.execSQL("DROP TABLE IF EXISTS expense");
+                db.execSQL("DROP TABLE IF EXISTS expense_type");
+                db.execSQL("DROP TABLE IF EXISTS income_type");
+                db.execSQL("DROP TABLE IF EXISTS income");
+
+
 
                 String sql = "create table users(" +
                         "id Integer primary key autoincrement, " +
@@ -40,6 +39,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         "username varchar(20) not null," +
                         "password varchar(20) not null," +
                         "remenber Integer default 0 not null, " +
+                        "gender varchar(3) default '未设置'," +
+                        "phonenumber varchar(13) default '未设置', " +
                         "registration_date DATETIME DEFAULT CURRENT_TIMESTAMP)";
                 db.execSQL(sql);
 

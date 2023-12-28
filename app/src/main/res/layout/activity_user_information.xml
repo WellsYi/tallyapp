@@ -5,19 +5,111 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     tools:context=".activity.UserInformationActivity">
 
-    <TextView
-        android:gravity="center"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="User's infromation"/>
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/back"
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="1dp"
+            android:text = "返回"
+            android:backgroundTint="#fffbfe"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用户信息"
+            android:layout_marginLeft="60dp"
+            android:textSize="20dp"/>
+    </LinearLayout>
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="返回"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/idTextView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@drawable/round_edittext_bg"
+            android:text="id"
+            android:textSize="15dp"
+            android:paddingLeft="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"/>
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="昵称"
+            android:background="@drawable/round_edittext_bg"
+            android:paddingLeft="10dp"
+            android:textSize="15dp"
+            android:layout_margin="20dp"/>
+
+        <TextView
+            android:id="@+id/usernameTextView"
+            android:layout_width="match_parent"
+            android:paddingLeft="10dp"
+            android:layout_height="30dp"
+            android:text="用户名"
+            android:background="@drawable/round_edittext_bg"
+            android:textSize="15dp"
+            android:layout_margin="20dp" />
+
+        <TextView
+            android:id="@+id/genderTextView"
+            android:layout_width="match_parent"
+            android:paddingLeft="10dp"
+            android:layout_height="30dp"
+            android:text="性别"
+            android:background="@drawable/round_edittext_bg"
+            android:textSize="15dp"
+            android:layout_margin="20dp" />
+
+        <TextView
+            android:id="@+id/phonenumberTextView"
+            android:layout_width="match_parent"
+            android:paddingLeft="10dp"
+            android:layout_height="30dp"
+            android:text="手机号"
+            android:background="@drawable/round_edittext_bg"
+            android:textSize="15dp"
+            android:layout_margin="20dp" />
+
+        <TextView
+            android:id="@+id/registdateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@drawable/round_edittext_bg"
+            android:layout_margin="20dp"
+            android:text="注册时间"
+            android:textSize="15dp"
+            android:paddingLeft="10dp"/>
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="注销用户"
+            android:textSize="18dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_margin = "30dp"
+            android:backgroundTint="@color/buttonblue"/>
+
+    </LinearLayout>
 
 </LinearLayout>
