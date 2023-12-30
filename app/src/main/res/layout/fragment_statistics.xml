@@ -1,14 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="15dp"
     tools:context=".fragment.Statistics">
 
     <!-- TODO: Update blank fragment layout -->
-    <com.github.mikephil.charting.charts.HorizontalBarChart
-        android:id="@+id/horizontal_bar_chart"
-        android:layout_width="match_parent"
-        android:layout_height="300dp" />
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="0dp"
+        android:gravity="right">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:src="@drawable/image_title"
+            android:layout_marginRight="100dp"/>
+
+        <TextView
+            android:id="@+id/yearPickerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="2023年度账单"
+            android:textSize="16dp"
+            android:fontFamily="@font/arialbd"/>
+        <ImageView
+            android:id="@+id/yearPickerImageView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/ic_year_picker"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="6dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2023年"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"
+            android:fontFamily="@font/arialbd"
+            android:id="@+id/yearTextView"/>
+    </LinearLayout>
+
+    <!--图表布局-->
+
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="15dp"
+       android:layout_marginLeft="10dp"
+       android:layout_marginRight="10dp"
+       android:layout_marginBottom="10dp"
+       android:background="@drawable/shape_bg_listview">
+
+       <TextView
+           android:id="@+id/balanceTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="本年结余"
+           android:textSize="14dp"
+           android:fontFamily="@font/arialbd"
+           android:layout_alignParentLeft="true"
+           android:layout_marginLeft="20dp"
+           android:layout_marginTop="10dp"
+           />
+
+       <TextView
+           android:id="@+id/balanceamountTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="30dp"
+           android:layout_alignParentRight="true"
+           android:layout_marginTop="6dp"
+           android:layout_marginRight="20dp"
+           android:fontFamily="@font/arialbd"
+           android:text="￥200.00"
+           android:textColor="@android:color/holo_blue_bright"
+           android:textSize="20dp" />
+       <TextView
+           android:id="@+id/yearexpenseTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="本年支出"
+           android:textSize="12dp"
+           android:layout_centerVertical="true"
+           android:textColor="@android:color/darker_gray"
+           android:layout_below="@+id/balanceTextView"
+           android:layout_marginLeft="20dp"
+           android:layout_marginTop="20dp"/>
+       <TextView
+           android:id="@+id/yearexpenseamountTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="-￥20.00"
+           android:layout_below="@+id/balanceamountTextView"
+           android:layout_alignParentRight="true"
+           android:layout_marginTop="14dp"
+           android:layout_marginRight="20dp"/>
+       <TextView
+           android:id="@+id/yearincomeTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="本年收入"
+           android:textSize="12dp"
+           android:textColor="@android:color/darker_gray"
+           android:layout_below="@+id/yearexpenseTextView"
+           android:layout_marginLeft="20dp"
+           android:layout_marginTop="10dp"/>
+       <TextView
+           android:id="@+id/yearincomeamountTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="￥20.00"
+           android:layout_below="@+id/yearexpenseamountTextView"
+           android:layout_alignParentRight="true"
+           android:layout_marginTop="10dp"
+           android:layout_marginRight="20dp"
+           android:layout_marginBottom="10dp"/>
+   </RelativeLayout>
+
+    <TextView
+        android:id="@+id/changetypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="支出排行榜"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:fontFamily="@font/arialbd"/>
+
+    <ListView
+        android:id="@+id/detailListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_bg_listview"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="70dp"/>
+
+
+</LinearLayout>

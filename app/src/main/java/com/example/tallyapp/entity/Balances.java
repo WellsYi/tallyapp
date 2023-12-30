@@ -9,6 +9,15 @@ public class Balances {
     private String TypeName;
     private BigDecimal Amount;
     private Date RecordDate;
+    private Double Percentage;
+
+    public Double getPercentage() {
+        return Percentage;
+    }
+
+    public void setPercentage(Double percentage) {
+        Percentage = percentage;
+    }
 
     public Balances(int id, String recordType, String typeName, BigDecimal amount, Date recordDate) {
         this.id = id;
@@ -16,6 +25,11 @@ public class Balances {
         TypeName = typeName;
         Amount = amount;
         RecordDate = recordDate;
+    }
+
+    public Balances(String typeName, BigDecimal amount) {
+        TypeName = typeName;
+        Amount = amount;
     }
 
     public Balances() {

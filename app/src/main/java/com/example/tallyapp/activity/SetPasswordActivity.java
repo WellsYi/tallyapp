@@ -3,6 +3,7 @@ package com.example.tallyapp.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
@@ -83,6 +85,19 @@ public class SetPasswordActivity extends AppCompatActivity {
                         utils.showDialog("密码必须是8-16位的大小写英文、数字结合(不能是纯数字)");
                     } else if (!newPassword.equals(repeatNewPassword)) {
                         utils.showDialog("两次填写的密码不一致");
+                    }else {
+                        ContentValues values = new ContentValues();
+                        values.put("password", newPassword);
+                        int rowsAffected = db.update("users", values, "username = ?", new String[] { username});
+                        if (rowsAffected > 0) {
+                            // 更新成功
+                            Toast.makeText(SetPasswordActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            // 更新失败
+                            Toast.makeText(SetPasswordActivity.this, "修改失败", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
                     }
                 }
                 

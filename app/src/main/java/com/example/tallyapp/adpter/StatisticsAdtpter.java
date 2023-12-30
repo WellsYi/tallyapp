@@ -2,40 +2,31 @@ package com.example.tallyapp.adpter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 
 import com.example.tallyapp.R;
 import com.example.tallyapp.dbhelper.DBHelper;
 import com.example.tallyapp.entity.Balances;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
-public class BanlancesAdapter extends ArrayAdapter<Balances> {
-
+public class StatisticsAdtpter extends ArrayAdapter<Balances> {
     private final ArrayList<Balances> balances;
     private final LayoutInflater inflater;
-
-
-    public BanlancesAdapter(Context context, ArrayList<Balances> balances) {
+    public StatisticsAdtpter(Context context, ArrayList<Balances> balances) {
         super(context, 0, balances);
         this.balances = balances;
         inflater = LayoutInflater.from(context);
@@ -43,10 +34,9 @@ public class BanlancesAdapter extends ArrayAdapter<Balances> {
     public interface OnItemClickListener {
         void onItemClick(Balances balance);
     }
+    private StatisticsAdtpter.OnItemClickListener mListener;
 
-    private OnItemClickListener mListener;
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnItemClickListener(StatisticsAdtpter.OnItemClickListener listener) {
         mListener = listener;
     }
 
@@ -56,20 +46,18 @@ public class BanlancesAdapter extends ArrayAdapter<Balances> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Balances balance = balances.get(position);
         String typeName = balance.getTypeName();
-        ViewHolder holder;
-
+        ViewHolder viewHolder;
 
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.list_detail_layout, parent, false);
-            holder = new ViewHolder(getContext());
-            holder.typeImageView = convertView.findViewById(R.id.typeImageView);
-            holder.typeTextView = convertView.findViewById(R.id.typeTextView);
-            holder.amountTextView = convertView.findViewById(R.id.amountTextView);
-            holder.dateTextView = convertView.findViewById(R.id.dateTextView);
-            convertView.setTag(holder);
+            convertView = inflater.inflate(R.layout.list_statistics_layout, parent, false);
+            viewHolder = new StatisticsAdtpter.ViewHolder(getContext());
+            viewHolder.typeImageView = convertView.findViewById(R.id.typeImageView);
+            viewHolder.typeTextView = convertView.findViewById(R.id.typeTextView);
+            viewHolder.amountTextView = convertView.findViewById(R.id.amountTextView);
+            convertView.setTag(viewHolder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+           viewHolder = (ViewHolder) convertView.getTag();
         }
 
         // 定义类型映射
@@ -103,42 +91,27 @@ public class BanlancesAdapter extends ArrayAdapter<Balances> {
 
         // 使用类型映射
         if (typeMap.containsKey(typeName)) {
-            holder.typeImageView.setImageResource(typeMap.get(typeName));
+            viewHolder.typeImageView.setImageResource(typeMap.get(typeName));
             if (!typeName.equals("工资") && !typeName.equals("兼职") && !typeName.equals("礼金") && !typeName.equals("理财")) {
-                holder.amountTextView.setText("-" + String.valueOf(balance.getAmount()));
+                viewHolder.amountTextView.setText("-￥" + String.valueOf(balance.getAmount()));
             } else {
-                holder.amountTextView.setText(String.valueOf(balance.getAmount()));
+                viewHolder.amountTextView.setText("￥" + String.valueOf(balance.getAmount()));
             }
         } else {
-            holder.typeImageView.setImageResource(defaultImageResource);
-            holder.amountTextView.setText(defaultAmount);
+            viewHolder.typeImageView.setImageResource(defaultImageResource);
+            viewHolder.amountTextView.setText(defaultAmount);
         }
 
         // 设置视图数据
-        holder.typeTextView.setText(typeName);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        holder.dateTextView.setText(sdf.format(balance.getRecordDate()));
-
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null) {
-                    mListener.onItemClick(balance);
-                }
-            }
-        });
-
-
+        viewHolder.typeTextView.setText(typeName);
         return convertView;
     }
-
-
 
     public static class ViewHolder {
         ImageView typeImageView;
         TextView typeTextView;
         TextView amountTextView;
-        TextView dateTextView;
+        TextView percentageTextView;
         DBHelper dbHelper;
         SQLiteDatabase db;
 
@@ -148,7 +121,4 @@ public class BanlancesAdapter extends ArrayAdapter<Balances> {
         }
     }
 
-
-
 }
-
