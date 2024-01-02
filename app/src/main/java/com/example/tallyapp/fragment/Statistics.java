@@ -114,6 +114,7 @@ public class Statistics extends Fragment {
         StatisticsAdtpter adtpter = new StatisticsAdtpter(getContext(), balances);
         detailListView.setAdapter(adtpter);
         setChangetypeTextView();
+        setInitYear();
         return view;
     }
 
@@ -134,6 +135,11 @@ public class Statistics extends Fragment {
         year = Integer.valueOf(getCurrentBeijingYear());
         getSelectedYearRecord(getCurrentBeijingYear());
 
+    }
+
+    private void setInitYear(){
+        yearPickerTextView.setText(String.valueOf(year) + "年度账单");
+        yearTextView.setText(String.valueOf(year) + "年");
     }
 
     public void showYearPickerDialog(){

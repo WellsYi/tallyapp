@@ -312,7 +312,6 @@ public class AccountingExpense extends Fragment {
         });
     }
     private void refreshFragmentData() {
-        
     }
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,10 +21,10 @@
             tools:ignore="ContentDescription" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:orientation="vertical">
 
@@ -49,88 +49,84 @@
             android:textSize="15dp"
             android:textColor="@color/black"
             android:focusable="false"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/yearEditText"
             android:drawableRight="@android:drawable/arrow_down_float"
             android:onClick="showYearMonthPickerDialog" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-
         <LinearLayout
-            android:layout_width="107dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:orientation="vertical">
+            android:layout_toRightOf="@+id/yearEditText"
+            android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/income_edit_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginTop="70dp"
-                android:background="@drawable/round_edittext_bg"
-                android:backgroundTint="#fffbfe"
-                android:text="收入"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="13dp" />
 
-            <EditText
-                android:id="@+id/income_amount_edit_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_edittext_bg"
-                android:backgroundTint="#fffbfe"
-                android:text="0.00"
-                android:textSize="15dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="85dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/expense_edit_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="107dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:layout_marginTop="70dp"
-                android:background="@drawable/round_edittext_bg"
-                android:backgroundTint="#fffbfe"
-                android:text="支出"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="13dp" />
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/expense_amount_edit_text"
-                android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/income_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_edittext_bg"
+                    android:backgroundTint="#fffbfe"
+                    android:text="收入"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/income_amount_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/round_edittext_bg"
+                    android:backgroundTint="#fffbfe"
+                    android:text="0.00"
+                    android:textSize="13dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_edittext_bg"
-                android:backgroundTint="#fffbfe"
-                android:text="0.00"
-                android:textSize="15dp" />
-        </LinearLayout>
+                android:layout_marginLeft="40dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/expense_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/round_edittext_bg"
+                    android:backgroundTint="#fffbfe"
+                    android:text="支出"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/expense_amount_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/round_edittext_bg"
+                    android:backgroundTint="#fffbfe"
+                    android:text="0.00"
+                    android:textSize="13dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="440dp"
+        android:layout_height="420dp"
         android:padding="10dp"
-        android:background="@drawable/shape_bg_listview"
-        android:layout_marginTop="160dp"/>
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_bg_listview"/>
 
-</FrameLayout>
+</LinearLayout>

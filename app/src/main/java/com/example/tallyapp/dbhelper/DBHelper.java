@@ -32,7 +32,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE IF EXISTS income");
 
 
-
+                //创建用户表
                 String sql = "create table users(" +
                         "id Integer primary key autoincrement, " +
                         "name varchar(20) not null," +
@@ -43,13 +43,11 @@ public class DBHelper extends SQLiteOpenHelper {
                         "phonenumber varchar(13) default '未设置', " +
                         "registration_date DATETIME DEFAULT CURRENT_TIMESTAMP)";
                 db.execSQL(sql);
-
                 // 创建新的花销类型表
                 String sql_expense_types = "create table expense_type(" +
                         "id Integer primary key autoincrement, " +
                         "typename varchar(20) not null)";
                 db.execSQL(sql_expense_types);
-
                 //创建花销表
                 String sql_expense =  "create table expense(" +
                         "id Integer primary key autoincrement, " +
@@ -60,7 +58,6 @@ public class DBHelper extends SQLiteOpenHelper {
                         "foreign key (expensetypeID) references expense_type(id)," +
                         "foreign key (userID) references users(id))";
                 db.execSQL(sql_expense);
-
                 //创建收入类型表
                 String sql_income_types = "create table income_type(" +
                         "id Integer primary key autoincrement, " +

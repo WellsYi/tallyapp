@@ -3,33 +3,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/typeImageView"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            />
+            android:layout_centerVertical="true"
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
         <TextView
             android:id="@+id/typeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:layout_toRightOf="@+id/typeImageView"
+            android:textSize="13dp"
+            android:layout_centerVertical="true"
             android:textStyle="bold"
             android:layout_marginLeft="20dp"
             android:text="type"
             android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/amountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:text="amount"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
 
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,22 +51,11 @@
         android:gravity="right">
 
         <TextView
-            android:id="@+id/amountTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:text="amount"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"/>
-
-        <TextView
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="date"
             android:textSize="13dp"
             android:textColor="@android:color/darker_gray"/>
-
     </LinearLayout>
 </LinearLayout>

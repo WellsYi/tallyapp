@@ -149,7 +149,8 @@
         android:background="@drawable/shape_bg_listview"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="70dp"/>
+        android:layout_marginBottom="70dp"
+        android:padding="10dp"/>
 
 
 </LinearLayout>
